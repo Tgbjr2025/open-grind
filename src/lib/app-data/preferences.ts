@@ -1,6 +1,6 @@
 import z from "zod";
-import { existsAppDataFile, readAppDataFile } from ".";
-import { decode } from "@msgpack/msgpack";
+import { existsAppDataFile, readAppDataFile, writeAppDataFile } from ".";
+import { decode, encode } from "@msgpack/msgpack";
 import { geohashSchema } from "$lib/api/geohash";
 
 const preferencesSchema = z.object({
@@ -19,4 +19,16 @@ export async function getPreferences(): Promise<
 			geohash: null,
 		};
 	}
+}
+
+export async function setPreferences(
+	newValues: Partial<z.infer<typeof preferencesSchema>>,
+): Promise<void> {
+	const oldValues = await getPreferences();
+	const preferences = {
+		...oldValues,
+		...newValues,
+	};
+	preferencesSchema.parse(preferences);
+	await writeAppDataFile("preferences.data", encode(preferences));
 }

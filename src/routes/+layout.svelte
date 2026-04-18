@@ -20,6 +20,7 @@
 		style: "background-color: var(--accent); color: var(--popover)",
 	}}
 />
+<!-- TODO: migrate to svelte-sonner (svelte-french-toast is dead) -->
 <IconContext values={{}}>
 	{@render children?.()}
 </IconContext>

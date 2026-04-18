@@ -18,12 +18,24 @@
 			]
 		},
 		{
+			"identifier": "fs:allow-app-write",
+			"allow": [
+				{
+					"path": "$APPDATA/preferences.json"
+				}
+			]
+		},
+		{
 			"identifier": "fs:allow-exists",
 			"allow": [
 				{
 					"path": "$APPDATA/preferences.json"
 				}
 			]
-		}
+		},
+		"geolocation:allow-check-permissions",
+		"geolocation:allow-request-permissions",
+		"geolocation:allow-get-current-position",
+		"os:default"
 	]
 }
