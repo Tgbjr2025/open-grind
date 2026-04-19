@@ -42,7 +42,9 @@
 	class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 w-full gap-0.5 px-1"
 >
 	{#await profiles}
-		Loading
+		{#each Array.from({ length: 20 })}
+			<div class="aspect-square bg-stone-700 animate-pulse"></div>
+		{/each}
 	{:then { profiles }}
 		{#each profiles as { displayName, age, distance, profileId, medias } (profileId)}
 			<ProfileMiniCard id={profileId} {displayName} {age} {distance} {medias} />
