@@ -3,6 +3,7 @@
 	import { onMount } from "svelte";
 	import { searchProfiles, type searchProfileSchema } from "./grid";
 	import { getPreferences } from "$lib/app-data/preferences.svelte";
+	import ProfileMiniCard from "./ProfileMiniCard.svelte";
 
 	let {
 		geohash,
@@ -23,15 +24,26 @@
 	// 	}}>Log out</button
 	// >
 
-	let profiles: z.infer<typeof searchProfileSchema>[] = $state([]);
-
-	onMount(() => {
-		void fetchProfiles();
-	});
+	let profiles = $state(fetchProfiles());
 
 	async function fetchProfiles() {
-		searchProfiles({
-			nearbyGeoHash: geohash,
-		});
+		try {
+			return await searchProfiles({
+				nearbyGeoHash: geohash,
+			});
+		} catch (e) {
+			console.error(e);
+			throw new Error("Failed to fetch profiles");
+		}
 	}
 </script>
+
+<div class="grid grid-cols-3 w-full gap-0.5 px-1">
+	{#await profiles}
+		Loading
+	{:then { profiles }}
+		{#each profiles as { displayName, age, distance, profileId } (profileId)}
+			<ProfileMiniCard id={profileId} {displayName} {age} {distance} />
+		{/each}
+	{/await}
+</div>

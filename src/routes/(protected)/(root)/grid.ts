@@ -5,11 +5,11 @@ import { mediaHashPublicSchema } from "$lib/api/media";
 import { urlSearchParamsCodec } from "$lib/utils";
 
 export const searchProfileSchema = z.object({
-	profileId: z.int().nonnegative(),
-	displayName: z.string(),
+	profileId: z.coerce.number().int().nonnegative(),
+	displayName: z.string().nullable(),
 	age: z.int().nonnegative().nullable(),
-	distance: z.number(),
-	medias: z.array(z.object({ mediaHash: mediaHashPublicSchema })),
+	distance: z.number().nullable(),
+	medias: z.array(z.object({ mediaHash: mediaHashPublicSchema })).nullable(),
 });
 
 export const gridQuerySchema = z.object({

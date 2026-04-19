@@ -152,14 +152,14 @@
 									showSearchResults = false;
 								}}
 							>
-								<div class="max-w-full block truncate line-clamp-1">
+								<span class="max-w-full block truncate line-clamp-1">
 									{place.name}
-								</div>
-								<div
+								</span>
+								<span
 									class="max-w-full block truncate line-clamp-1 text-sm text-popover/40"
 								>
 									{place.address}
-								</div>
+								</span>
 							</Button>
 						{/each}
 					{/if}
