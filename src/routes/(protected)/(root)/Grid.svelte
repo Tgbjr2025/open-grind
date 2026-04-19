@@ -38,12 +38,14 @@
 	}
 </script>
 
-<div class="grid grid-cols-3 w-full gap-0.5 px-1">
+<div
+	class="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 w-full gap-0.5 px-1"
+>
 	{#await profiles}
 		Loading
 	{:then { profiles }}
-		{#each profiles as { displayName, age, distance, profileId } (profileId)}
-			<ProfileMiniCard id={profileId} {displayName} {age} {distance} />
+		{#each profiles as { displayName, age, distance, profileId, medias } (profileId)}
+			<ProfileMiniCard id={profileId} {displayName} {age} {distance} {medias} />
 		{/each}
 	{/await}
 </div>
