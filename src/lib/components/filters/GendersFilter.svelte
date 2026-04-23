@@ -1,0 +1,80 @@
+<script lang="ts">
+	import { fetchGenders } from "$lib/api/genders";
+	import { Spinner } from "$lib/components/ui/spinner";
+	import * as ToggleGroup from "$lib/components/ui/toggle-group";
+	import { crossfade, scale, type TransitionConfig } from "svelte/transition";
+	import FilterBoolean from "./FilterBoolean.svelte";
+	import { expoOut, sineOut } from "svelte/easing";
+	import Button from "$lib/components/ui/button/button.svelte";
+
+	let {
+		checked = $bindable(),
+		value = $bindable(),
+	}: {
+		checked: boolean;
+		value: number[];
+	} = $props();
+
+	let genders = $state(
+		fetchGenders().then((genders) =>
+			genders
+				.filter((g) => g.displayGroup > 0)
+				.sort((a, b) => (a.sortFilter ?? 1) - (b.sortFilter ?? 1)),
+		),
+	);
+
+	const hide = (node: HTMLDivElement): TransitionConfig => {
+		const width = node.offsetWidth;
+		return {
+			duration: 400,
+			css: (t: number, u: number) =>
+				`width: calc(${t} * ${width}px); opacity: ${t}; margin-left: calc(${u} * -4px)`,
+			easing: expoOut,
+		};
+	};
+
+	let expanded = $state(false);
+
+	const [send, receive] = crossfade({
+		duration: 400,
+		fallback(node) {
+			return scale(node, { duration: 400, easing: sineOut });
+		},
+	});
+</script>
+
+<div class="flex flex-col gap-2 min-w-0">
+	<FilterBoolean id="gender" bind:checked>Gender</FilterBoolean>
+	<div class="ps-6">
+		{#await genders}
+			<Spinner />
+		{:then genders}
+			<ToggleGroup.Root
+				type="multiple"
+				variant="outline"
+				spacing={2}
+				class="flex-wrap w-full gap-1"
+				bind:value={() => value.map(String), (v) => (value = v.map(Number))}
+			>
+				{#each genders as { genderId, excludeOnFilterSelection, genderPlural, displayGroup } (genderId)}
+					{#if excludeOnFilterSelection === null || (!value.some( (v) => excludeOnFilterSelection.includes(v), ) && (expanded || displayGroup === 1))}
+						<div transition:hide class="overflow-clip">
+							<ToggleGroup.Item value={String(genderId)}>
+								{genderPlural}
+							</ToggleGroup.Item>
+						</div>
+					{/if}
+				{/each}
+				<Button variant="secondary" onclick={() => (expanded = !expanded)}>
+					{#if expanded}
+						Less
+					{:else}
+						More
+					{/if}
+				</Button>
+			</ToggleGroup.Root>
+		{:catch}
+			<div class="text-sm text-destructive">Failed to load genders</div>
+		{/await}
+	</div>
+</div>

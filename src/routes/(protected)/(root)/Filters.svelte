@@ -2,25 +2,36 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as Sheet from "$lib/components/ui/sheet";
 	import { buttonVariants } from "$lib/components/ui/button";
-	import { Input } from "$lib/components/ui/input";
-	import { Label } from "$lib/components/ui/label";
 	import { SlidersHorizontalIcon } from "phosphor-svelte";
-	import { Checkbox } from "$lib/components/ui/checkbox";
-	import { Slider } from "$lib/components/ui/slider";
-	import * as ToggleGroup from "$lib/components/ui/toggle-group";
+	import FilterBoolean from "$lib/components/filters/FilterBoolean.svelte";
+	import PositionFilter from "$lib/components/filters/PositionFilter.svelte";
+	import PhotosFilter from "$lib/components/filters/PhotosFilter.svelte";
+	import AgeFilter from "$lib/components/filters/AgeFilter.svelte";
+	import GendersFilter from "$lib/components/filters/GendersFilter.svelte";
 
-	let favorites = $state(false);
-	let online = $state(false);
-	let rightNow = $state(false);
-	let ageEnabled = $state(false);
-	let age = $state([18, 102]);
-	let genderEnabled = $state(false);
-	let positionEnabled = $state(false);
-	let positions: string[] = $state([]);
+	let open = $state(true);
+
+	let filterIsFavorite = $state(false);
+	let filterIsOnline = $state(false);
+	let filterIsRightNow = $state(false);
+
+	let filterAgeEnabled = $state(false);
+	let filterAge = $state([18, 102]);
+
+	let filterGenderEnabled = $state(false);
+	let filterGenders: number[] = $state([]);
+
+	let filterPositionEnabled = $state(false);
+	let filterPositions: string[] = $state([]);
+
+	let filterPhotosEnabled = $state(false);
+	let filterPhotos: string[] = $state([]);
+
+	let contentScroll = $state(0);
 </script>
 
 <div class="flex w-full">
-	<Sheet.Root open>
+	<Sheet.Root bind:open>
 		<Sheet.Trigger class={buttonVariants({ variant: "secondary" })}>
 			<SlidersHorizontalIcon />
 		</Sheet.Trigger>
@@ -28,80 +39,60 @@
 			side="bottom"
 			showCloseButton={false}
 			preventOverflowTextSelection={false}
+			class="max-h-dvh"
 		>
-			<Sheet.Header class="p-4">
+			<Sheet.Header
+				class={[
+					"p-4 border border-x-0 border-t-0 border-transparent transition-colors",
+					{
+						"border-muted": contentScroll > 0,
+					},
+				]}
+			>
 				<Sheet.Title>Filters</Sheet.Title>
 			</Sheet.Header>
-			<div class="grid grid-cols-1 sm:grid-rows-6 gap-4 flex-1 auto-rows-max px-4 w-full sm:grid-flow-col">
-				<div class="flex items-center gap-3 w-full">
-					<Checkbox id="filters-favorite" bind:checked={favorites} />
-					<Label for="filters-favorite">Favorites</Label>
-				</div>
-				<div class="flex items-center gap-3 w-full">
-					<Checkbox id="filters-online" bind:checked={online} />
-					<Label for="filters-online">Online</Label>
-				</div>
-				<div class="flex items-center gap-3 w-full">
-					<Checkbox id="filters-right-now" bind:checked={rightNow} />
-					<Label for="filters-right-now">Right now</Label>
-				</div>
-				<div class="flex flex-col gap-3">
-					<div class="flex items-center gap-3 w-full max-w-lg">
-						<Checkbox id="filters-age" bind:checked={ageEnabled} />
-						<Label for="filters-age">Age</Label>
-						<span class="ml-auto min-w-0 truncate">
-							{#if age[1] === 102}
-								{age[0]} years & over
-							{:else}
-								{age[0]} - {age[1]}
-							{/if}
-						</span>
-					</div>
-					<div class="w-full max-w-lg ps-7">
-						<Slider
-							type="multiple"
-							bind:value={age}
-							min={18}
-							max={102}
-							step={1}
-							class="w-full"
-						/>
-					</div>
-				</div>
-				<div class="flex items-center gap-3 w-full">
-					<Checkbox id="filters-gender" bind:checked={genderEnabled} />
-					<Label for="filters-gender">Gender</Label>
-				</div>
-				<div class="flex flex-col gap-2">
-					<div class="flex items-center gap-3 w-full">
-						<Checkbox id="filters-position" bind:checked={positionEnabled} />
-						<Label for="filters-position">Position</Label>
-					</div>
-					<div class="ps-7">
-						<ToggleGroup.Root
-							type="multiple"
-							variant="outline"
-							spacing={2}
-							class="flex-wrap w-full gap-1"
-							bind:value={positions}
-						>
-							<ToggleGroup.Item value="top">Top</ToggleGroup.Item>
-							<ToggleGroup.Item value="vers-top">Vers Top</ToggleGroup.Item>
-							<ToggleGroup.Item value="vers">Versatile</ToggleGroup.Item>
-							<ToggleGroup.Item value="vers-bottom"
-								>Vers Bottom</ToggleGroup.Item
-							>
-							<ToggleGroup.Item value="bottom">Bottom</ToggleGroup.Item>
-							<ToggleGroup.Item value="side">Side</ToggleGroup.Item>
-							<ToggleGroup.Item value="not-specified">
-								Not Specified
-							</ToggleGroup.Item>
-						</ToggleGroup.Root>
-					</div>
-				</div>
+			<div
+				class="md:columns-2 lg:columns-3 flex-wrap space-y-4 flex-1 px-4 w-full **:break-inside-avoid overflow-auto max-h-full min-h-0 shrink py-1"
+				onscroll={(e) => {
+					if (e.target instanceof HTMLDivElement) {
+						contentScroll =
+							e.target.scrollTop /
+							(e.target.scrollHeight - e.target.clientHeight);
+					}
+				}}
+			>
+				<FilterBoolean id="favorite" bind:checked={filterIsFavorite}>
+					Favorites
+				</FilterBoolean>
+				<FilterBoolean id="online" bind:checked={filterIsOnline}>
+					Online
+				</FilterBoolean>
+				<FilterBoolean id="right-now" bind:checked={filterIsRightNow}>
+					Right now
+				</FilterBoolean>
+				<AgeFilter bind:checked={filterAgeEnabled} bind:value={filterAge} />
+				<GendersFilter
+					bind:checked={filterGenderEnabled}
+					bind:value={filterGenders}
+				/>
+				<PositionFilter
+					bind:checked={filterPositionEnabled}
+					bind:value={filterPositions}
+				/>
+				<PhotosFilter
+					bind:checked={filterPhotosEnabled}
+					bind:value={filterPhotos}
+				/>
 			</div>
-			<Sheet.Footer class="p-4 items-end">
-				<Button type="submit" class="max-w-lg">Apply</Button>
+			<Sheet.Footer
+				class={[
+					"p-4 sm:items-end border border-x-0 border-b-0 border-transparent transition-colors",
+					{
+						"border-muted": contentScroll < 1,
+					},
+				]}
+			>
+				<Button type="submit">Apply</Button>
 			</Sheet.Footer>
 		</Sheet.Content>
 	</Sheet.Root>
