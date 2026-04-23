@@ -23,6 +23,19 @@
 		</span>
 	</FilterField>
 	<div class="max-w-lg ps-7">
-		<Slider type="multiple" bind:value min={18} max={102} step={1} class="" />
+		<Slider
+			type="multiple"
+			bind:value={
+				() => value,
+				(v) => {
+					checked = true;
+					value = v;
+				}
+			}
+			min={18}
+			max={102}
+			step={1}
+			class=""
+		/>
 	</div>
 </div>

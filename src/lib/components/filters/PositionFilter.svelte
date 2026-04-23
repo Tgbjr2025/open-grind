@@ -28,7 +28,7 @@
 			variant="outline"
 			spacing={2}
 			class="flex-wrap w-full gap-1"
-			bind:value
+			bind:value={() => value, (v) => ((checked = v.length > 0), (value = v))}
 		>
 			<ToggleGroup.Item value="top">
 				<ArrowUpIcon />

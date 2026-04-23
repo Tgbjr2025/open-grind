@@ -34,13 +34,6 @@
 	};
 
 	let expanded = $state(false);
-
-	const [send, receive] = crossfade({
-		duration: 400,
-		fallback(node) {
-			return scale(node, { duration: 400, easing: sineOut });
-		},
-	});
 </script>
 
 <div class="flex flex-col gap-2 min-w-0">
@@ -54,7 +47,10 @@
 				variant="outline"
 				spacing={2}
 				class="flex-wrap w-full gap-1"
-				bind:value={() => value.map(String), (v) => (value = v.map(Number))}
+				bind:value={
+					() => value.map(String),
+					(v) => ((checked = v.length > 0), (value = v.map(Number)))
+				}
 			>
 				{#each genders as { genderId, excludeOnFilterSelection, genderPlural, displayGroup } (genderId)}
 					{#if excludeOnFilterSelection === null || (!value.some( (v) => excludeOnFilterSelection.includes(v), ) && (expanded || displayGroup === 1))}

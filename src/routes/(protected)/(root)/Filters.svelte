@@ -8,6 +8,7 @@
 	import PhotosFilter from "$lib/components/filters/PhotosFilter.svelte";
 	import AgeFilter from "$lib/components/filters/AgeFilter.svelte";
 	import GendersFilter from "$lib/components/filters/GendersFilter.svelte";
+	import TribesFilter from "$lib/components/filters/TribesFilter.svelte";
 
 	let open = $state(true);
 
@@ -26,6 +27,9 @@
 
 	let filterPhotosEnabled = $state(false);
 	let filterPhotos: string[] = $state([]);
+
+	let filterTribesEnabled = $state(false);
+	let filterTribes: number[] = $state([]);
 
 	let contentScroll = $state(0);
 </script>
@@ -82,6 +86,10 @@
 				<PhotosFilter
 					bind:checked={filterPhotosEnabled}
 					bind:value={filterPhotos}
+				/>
+				<TribesFilter
+					bind:checked={filterTribesEnabled}
+					bind:value={filterTribes}
 				/>
 			</div>
 			<Sheet.Footer
