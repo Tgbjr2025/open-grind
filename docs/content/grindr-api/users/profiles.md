@@ -205,7 +205,7 @@ Not to be confused with [Sexual health](#sexual-health).
 - 4 — "Coffee Shop"
 - 5 — "Restaurant"
 
-## Sexual health
+## Sexual health (also "Health Practices")
 
 Not to be confused with [HIV status](#hiv-status).
 

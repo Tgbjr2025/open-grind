@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { tribes } from "$lib/api/profile";
+	import { healthPracticesOptions } from "$lib/api/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {
@@ -11,9 +11,9 @@
 <FilterSimpleArray
 	bind:checked
 	bind:value
-	id="tribes"
-	label="Tribes"
-	items={Object.entries(tribes).map(([value, label]) => ({
+	id="health-practices"
+	label="Health Practices"
+	items={Object.entries(healthPracticesOptions).map(([value, label]) => ({
 		value: Number(value),
 		label,
 	}))}

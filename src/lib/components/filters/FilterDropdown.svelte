@@ -22,7 +22,7 @@
 		const height = node.offsetHeight;
 		return {
 			duration: 400,
-			css: (t: number) => `height: calc(${t} * ${height}px); opacity: ${t};`,
+			css: (t: number, u: number) => `height: calc(${t} * ${height}px); opacity: ${t}; margin-top: calc(${u} * -8px)`,
 			easing: expoOut,
 		};
 	};

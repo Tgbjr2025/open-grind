@@ -9,6 +9,21 @@
 	import AgeFilter from "$lib/components/filters/AgeFilter.svelte";
 	import GendersFilter from "$lib/components/filters/GendersFilter.svelte";
 	import TribesFilter from "$lib/components/filters/TribesFilter.svelte";
+	import type {
+		AcceptNSFWPicsOptionId,
+		BodyTypeId,
+		HealthPracticeOptionId,
+		LookingForOptionId,
+		MeetAtOptionId,
+		RelationshipStatusId,
+		TribeId,
+	} from "$lib/api/profile";
+	import BodyTypeFilter from "$lib/components/filters/BodyTypeFilter.svelte";
+	import RelationshipStatusFilter from "$lib/components/filters/RelationshipStatusFilter.svelte";
+	import AcceptNSFWPicsFilter from "$lib/components/filters/AcceptNSFWPicsFilter.svelte";
+	import LookingForFilter from "$lib/components/filters/LookingForFilter.svelte";
+	import MeetAtFilter from "$lib/components/filters/MeetAtFilter.svelte";
+	import HealthPracticesFilter from "$lib/components/filters/HealthPracticesFilter.svelte";
 
 	let open = $state(true);
 
@@ -29,7 +44,27 @@
 	let filterPhotos: string[] = $state([]);
 
 	let filterTribesEnabled = $state(false);
-	let filterTribes: number[] = $state([]);
+	let filterTribes: TribeId[] = $state([]);
+
+	let filterBodyTypesEnabled = $state(false);
+	let filterBodyTypes: BodyTypeId[] = $state([]);
+
+	let filterRelationshipStatusesEnabled = $state(false);
+	let filterRelationshipStatuses: RelationshipStatusId[] = $state([]);
+
+	let filterAcceptNSFWPicsEnabled = $state(false);
+	let filterAcceptNSFWPics: AcceptNSFWPicsOptionId[] = $state([]);
+
+	let filterLookingForEnabled = $state(false);
+	let filterLookingFor: LookingForOptionId[] = $state([]);
+
+	let filterMeetAtEnabled = $state(false);
+	let filterMeetAt: MeetAtOptionId[] = $state([]);
+
+	let filterHaventChattedTodayEnabled = $state(false);
+
+	let filterHealthPracticesEnabled = $state(false);
+	let filterHealthPractices: HealthPracticeOptionId[] = $state([]);
 
 	let contentScroll = $state(0);
 </script>
@@ -90,6 +125,38 @@
 				<TribesFilter
 					bind:checked={filterTribesEnabled}
 					bind:value={filterTribes}
+				/>
+				<BodyTypeFilter
+					bind:checked={filterBodyTypesEnabled}
+					bind:value={filterBodyTypes}
+				/>
+				<!-- TODO: height -->
+				<!-- TODO: weight -->
+				<RelationshipStatusFilter
+					bind:checked={filterRelationshipStatusesEnabled}
+					bind:value={filterRelationshipStatuses}
+				/>
+				<AcceptNSFWPicsFilter
+					bind:checked={filterAcceptNSFWPicsEnabled}
+					bind:value={filterAcceptNSFWPics}
+				/>
+				<LookingForFilter
+					bind:checked={filterLookingForEnabled}
+					bind:value={filterLookingFor}
+				/>
+				<MeetAtFilter
+					bind:checked={filterMeetAtEnabled}
+					bind:value={filterMeetAt}
+				/>
+				<FilterBoolean
+					id="havent-chatted-today"
+					bind:checked={filterHaventChattedTodayEnabled}
+				>
+					Haven't chatted today
+				</FilterBoolean>
+				<HealthPracticesFilter
+					bind:checked={filterHealthPracticesEnabled}
+					bind:value={filterHealthPractices}
 				/>
 			</div>
 			<Sheet.Footer

@@ -4,7 +4,7 @@
 	import { searchProfiles, type searchProfileSchema } from "./grid";
 	import { getPreferences } from "$lib/app-data/preferences.svelte";
 	import ProfileMiniCard from "./ProfileMiniCard.svelte";
-	import Filters from "./Filters.svelte";
+	import Filters from "./GridFilters.svelte";
 
 	let {
 		geohash,
