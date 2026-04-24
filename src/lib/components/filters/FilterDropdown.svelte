@@ -8,29 +8,38 @@
 		checked = $bindable(),
 		id,
 		label,
+		endLabel,
 		children,
+		contentClass,
 	}: {
 		checked: boolean;
 		id: string;
 		label: string;
+		endLabel?: string;
 		children?: import("svelte").Snippet;
+		contentClass?: import("svelte/elements").ClassValue;
 	} = $props();
 
 	let expanded = $state(false);
 
 	const hide = (node: HTMLDivElement): TransitionConfig => {
-		const height = node.offsetHeight;
+		const height = node.scrollHeight;
 		return {
 			duration: 400,
-			css: (t: number, u: number) => `height: calc(${t} * ${height}px); opacity: ${t}; margin-top: calc(${u} * -8px)`,
+			css: (t: number, u: number) =>
+				`height: calc(${t} * ${height}px); opacity: ${t}; margin-top: calc(${u} * -8px)`,
 			easing: expoOut,
 		};
 	};
 </script>
 
-<div class="flex flex-col min-w-0">
+{#snippet endAdornment()}
+	{endLabel}
+{/snippet}
+<div class="flex flex-col min-w-0 shrink-0">
 	<FilterBoolean
 		{id}
+		endAdornment={endLabel !== undefined ? endAdornment : undefined}
 		bind:checked={
 			() => checked,
 			(v) => {
@@ -49,7 +58,7 @@
 		/>
 	</FilterBoolean>
 	{#if expanded}
-		<div class="ps-6 pt-2 overflow-clip" transition:hide>
+		<div class={["ps-6 pt-2 overflow-clip shrink-0", contentClass]} transition:hide>
 			{@render children?.()}
 		</div>
 	{/if}

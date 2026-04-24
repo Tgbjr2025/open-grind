@@ -3,12 +3,23 @@
 	import * as Sheet from "$lib/components/ui/sheet";
 	import { buttonVariants } from "$lib/components/ui/button";
 	import { SlidersHorizontalIcon } from "phosphor-svelte";
+
 	import FilterBoolean from "$lib/components/filters/FilterBoolean.svelte";
-	import PositionFilter from "$lib/components/filters/PositionFilter.svelte";
-	import PhotosFilter from "$lib/components/filters/PhotosFilter.svelte";
+
 	import AgeFilter from "$lib/components/filters/AgeFilter.svelte";
 	import GendersFilter from "$lib/components/filters/GendersFilter.svelte";
+	import PositionFilter from "$lib/components/filters/PositionFilter.svelte";
+	import PhotosFilter from "$lib/components/filters/PhotosFilter.svelte";
 	import TribesFilter from "$lib/components/filters/TribesFilter.svelte";
+	import BodyTypeFilter from "$lib/components/filters/BodyTypeFilter.svelte";
+	import HeightFilter from "$lib/components/filters/HeightFilter.svelte";
+	import WeightFilter from "$lib/components/filters/WeightFilter.svelte";
+	import RelationshipStatusFilter from "$lib/components/filters/RelationshipStatusFilter.svelte";
+	import AcceptNSFWPicsFilter from "$lib/components/filters/AcceptNSFWPicsFilter.svelte";
+	import LookingForFilter from "$lib/components/filters/LookingForFilter.svelte";
+	import MeetAtFilter from "$lib/components/filters/MeetAtFilter.svelte";
+	import HealthPracticesFilter from "$lib/components/filters/HealthPracticesFilter.svelte";
+
 	import type {
 		AcceptNSFWPicsOptionId,
 		BodyTypeId,
@@ -18,12 +29,6 @@
 		RelationshipStatusId,
 		TribeId,
 	} from "$lib/api/profile";
-	import BodyTypeFilter from "$lib/components/filters/BodyTypeFilter.svelte";
-	import RelationshipStatusFilter from "$lib/components/filters/RelationshipStatusFilter.svelte";
-	import AcceptNSFWPicsFilter from "$lib/components/filters/AcceptNSFWPicsFilter.svelte";
-	import LookingForFilter from "$lib/components/filters/LookingForFilter.svelte";
-	import MeetAtFilter from "$lib/components/filters/MeetAtFilter.svelte";
-	import HealthPracticesFilter from "$lib/components/filters/HealthPracticesFilter.svelte";
 
 	let open = $state(true);
 
@@ -48,6 +53,12 @@
 
 	let filterBodyTypesEnabled = $state(false);
 	let filterBodyTypes: BodyTypeId[] = $state([]);
+
+	let filterHeightEnabled = $state(false);
+	let filterHeight: number[] = $state([120, 242]);
+
+	let filterWeightEnabled = $state(false);
+	let filterWeight: number[] = $state([40, 273]);
 
 	let filterRelationshipStatusesEnabled = $state(false);
 	let filterRelationshipStatuses: RelationshipStatusId[] = $state([]);
@@ -91,7 +102,7 @@
 				<Sheet.Title>Filters</Sheet.Title>
 			</Sheet.Header>
 			<div
-				class="md:columns-2 lg:columns-3 flex-wrap space-y-4 flex-1 px-4 w-full **:break-inside-avoid overflow-auto max-h-full min-h-0 shrink py-1"
+				class="md:columns-2 lg:columns-3 flex-wrap space-y-4 flex-1 px-4 w-full **:break-inside-avoid overflow-auto max-h-full min-h-0 shrink py-1 pb-4"
 				onscroll={(e) => {
 					if (e.target instanceof HTMLDivElement) {
 						contentScroll =
@@ -130,8 +141,14 @@
 					bind:checked={filterBodyTypesEnabled}
 					bind:value={filterBodyTypes}
 				/>
-				<!-- TODO: height -->
-				<!-- TODO: weight -->
+				<HeightFilter
+					bind:checked={filterHeightEnabled}
+					bind:value={filterHeight}
+				/>
+				<WeightFilter
+					bind:checked={filterWeightEnabled}
+					bind:value={filterWeight}
+				/>
 				<RelationshipStatusFilter
 					bind:checked={filterRelationshipStatusesEnabled}
 					bind:value={filterRelationshipStatuses}
