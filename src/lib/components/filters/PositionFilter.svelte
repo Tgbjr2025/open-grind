@@ -1,5 +1,7 @@
 <script lang="ts">
+	import type { filterPositionsSchema } from "$lib/components/filters/filters";
 	import * as ToggleGroup from "$lib/components/ui/toggle-group";
+	import type z from "zod";
 	import FilterBoolean from "./FilterBoolean.svelte";
 	import {
 		ArrowDownIcon,
@@ -16,7 +18,7 @@
 		value = $bindable(),
 	}: {
 		checked: boolean;
-		value: string[];
+		value: z.infer<typeof filterPositionsSchema>;
 	} = $props();
 </script>
 

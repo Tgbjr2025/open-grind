@@ -1,14 +1,16 @@
 <script lang="ts">
 	import * as ToggleGroup from "$lib/components/ui/toggle-group";
+	import type z from "zod";
 	import FilterBoolean from "./FilterBoolean.svelte";
 	import { FolderLockIcon, ImageIcon, SmileyWinkIcon } from "phosphor-svelte";
+	import type { filterPhotosSchema } from "$lib/components/filters/filters";
 
 	let {
 		checked = $bindable(),
 		value = $bindable(),
 	}: {
 		checked: boolean;
-		value: string[];
+		value: z.infer<typeof filterPhotosSchema>;
 	} = $props();
 </script>
 

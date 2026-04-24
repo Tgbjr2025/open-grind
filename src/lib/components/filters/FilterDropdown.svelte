@@ -11,6 +11,7 @@
 		endLabel,
 		children,
 		contentClass,
+		class: className,
 	}: {
 		checked: boolean;
 		id: string;
@@ -18,6 +19,7 @@
 		endLabel?: string;
 		children?: import("svelte").Snippet;
 		contentClass?: import("svelte/elements").ClassValue;
+		class?: import("svelte/elements").ClassValue;
 	} = $props();
 
 	let expanded = $state(false);
@@ -36,7 +38,7 @@
 {#snippet endAdornment()}
 	{endLabel}
 {/snippet}
-<div class="flex flex-col min-w-0 shrink-0">
+<div class={["flex flex-col min-w-0 shrink-0", className]}>
 	<FilterBoolean
 		{id}
 		endAdornment={endLabel !== undefined ? endAdornment : undefined}
@@ -58,7 +60,10 @@
 		/>
 	</FilterBoolean>
 	{#if expanded}
-		<div class={["ps-6 pt-2 overflow-clip shrink-0", contentClass]} transition:hide>
+		<div
+			class={["ps-6 pt-2 overflow-clip shrink-0", contentClass]}
+			transition:hide
+		>
 			{@render children?.()}
 		</div>
 	{/if}

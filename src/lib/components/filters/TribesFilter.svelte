@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { tribes } from "$lib/api/profile";
+	import { tribes, type TribeId } from "$lib/api/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {
 		checked = $bindable(),
 		value = $bindable(),
-	}: { checked: boolean; value: number[] } = $props();
+	}: { checked: boolean; value: TribeId[] } = $props();
 </script>
 
 <FilterSimpleArray

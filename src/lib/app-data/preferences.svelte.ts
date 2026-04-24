@@ -2,9 +2,11 @@ import z from "zod";
 import { existsAppDataFile, readAppDataFile, writeAppDataFile } from ".";
 import { decode, encode } from "@msgpack/msgpack";
 import { geohashSchema } from "$lib/api/geohash";
+import { gridSearchFiltersSchema } from "$lib/components/filters/filters";
 
 const preferencesSchema = z.object({
 	geohash: geohashSchema.nullable(),
+	gridSearchFilters: gridSearchFiltersSchema.optional(),
 });
 
 export async function getPreferences(): Promise<

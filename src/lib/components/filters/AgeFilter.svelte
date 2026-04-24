@@ -22,7 +22,7 @@
 			{/if}
 		</span>
 	</FilterField>
-	<div class="max-w-lg ps-7">
+	<div class="ps-7">
 		<Slider
 			type="multiple"
 			bind:value={
@@ -35,7 +35,7 @@
 			min={18}
 			max={102}
 			step={1}
-			class=""
+			class=""	
 		/>
 	</div>
 </div>

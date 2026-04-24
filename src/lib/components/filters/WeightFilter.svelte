@@ -16,7 +16,7 @@
 		endLabel={`${value[0] === 40 ? "No min" : value[0] + " kg"} - ${
 			value[1] === 273 ? "No max" : value[1] + " kg"
 		}`}
-		contentClass="max-w-lg ps-7 h-5"
+		contentClass="ps-7 h-5"
 	>
 		<Slider
 			type="multiple"

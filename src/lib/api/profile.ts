@@ -1,3 +1,22 @@
+import z from "zod";
+
+export const sexualPositions = {
+	1: "Top",
+	2: "Bottom",
+	3: "Versatile",
+	4: "Vers Bottom",
+	5: "Vers Top",
+	6: "Side",
+};
+
+export const sexualPositionSchema = z.union(
+	Object.keys(sexualPositions).map((key) =>
+		z.literal(Number(key) as keyof typeof sexualPositions),
+	),
+);
+
+export type SexualPositionId = keyof typeof sexualPositions;
+
 export const lookingForOptions = {
 	2: "Chat",
 	3: "Dates",
@@ -7,6 +26,12 @@ export const lookingForOptions = {
 	7: "Hookups",
 } as const;
 
+export const lookingForOptionSchema = z.union(
+	Object.keys(lookingForOptions).map((key) =>
+		z.literal(Number(key) as keyof typeof lookingForOptions),
+	),
+);
+
 export type LookingForOptionId = keyof typeof lookingForOptions;
 
 export const acceptNSFWPicsOptions = {
@@ -14,6 +39,12 @@ export const acceptNSFWPicsOptions = {
 	2: "Not At First",
 	3: "Yes Please",
 } as const;
+
+export const acceptNSFWPicsOptionSchema = z.union(
+	Object.keys(acceptNSFWPicsOptions).map((key) =>
+		z.literal(Number(key) as keyof typeof acceptNSFWPicsOptions),
+	),
+);
 
 export type AcceptNSFWPicsOptionId = keyof typeof acceptNSFWPicsOptions;
 
@@ -28,6 +59,12 @@ export const relationshipStatuses = {
 	8: "Open Relationship",
 } as const;
 
+export const relationshipStatusSchema = z.union(
+	Object.keys(relationshipStatuses).map((key) =>
+		z.literal(Number(key) as keyof typeof relationshipStatuses),
+	),
+);
+
 export type RelationshipStatusId = keyof typeof relationshipStatuses;
 
 export const bodyTypes = {
@@ -40,6 +77,12 @@ export const bodyTypes = {
 } as const;
 
 export type BodyTypeId = keyof typeof bodyTypes;
+
+export const bodyTypeSchema = z.union(
+	Object.keys(bodyTypes).map((key) =>
+		z.literal(Number(key) as keyof typeof bodyTypes),
+	),
+);
 
 export const tribes = {
 	1: "Bear",
@@ -57,6 +100,12 @@ export const tribes = {
 	13: "Twink",
 } as const;
 
+export const tribeSchema = z.union(
+	Object.keys(tribes).map((key) =>
+		z.literal(Number(key) as keyof typeof tribes),
+	),
+);
+
 export type TribeId = keyof typeof tribes;
 
 export const meetAtOptions = {
@@ -67,6 +116,12 @@ export const meetAtOptions = {
 	5: "Restaurant",
 } as const;
 
+export const meetAtOptionsSchema = z.union(
+	Object.keys(meetAtOptions).map((key) =>
+		z.literal(Number(key) as keyof typeof meetAtOptions),
+	),
+);
+
 export type MeetAtOptionId = keyof typeof meetAtOptions;
 
 export const healthPracticesOptions = {
@@ -76,5 +131,11 @@ export const healthPracticesOptions = {
 	4: "I'm HIV undetectable",
 	5: "Prefer to discuss",
 } as const;
+
+export const healthPracticesOptionsSchema = z.union(
+	Object.keys(healthPracticesOptions).map((key) =>
+		z.literal(Number(key) as keyof typeof healthPracticesOptions),
+	),
+);
 
 export type HealthPracticeOptionId = keyof typeof healthPracticesOptions;
