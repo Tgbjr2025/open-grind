@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { lookingForOptions } from "$lib/api/profile";
+	import { lookingForOptions } from "$lib/model/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {

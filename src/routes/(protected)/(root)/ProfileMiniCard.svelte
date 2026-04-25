@@ -38,7 +38,7 @@
 	</div>
 	{#if distance}
 		<Badge class="absolute top-2 right-2 bg-popover/20 backdrop-blur-2xl" variant="outline">
-			{distance}m
+			{Math.round(distance)}m
 		</Badge>
 	{/if}
 	<div class="w-full z-1 flex p-0.5 gap-0.5">

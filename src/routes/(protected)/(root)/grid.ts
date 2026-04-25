@@ -1,7 +1,7 @@
 import z from "zod";
 import { fetchRest } from "$lib/api";
-import { geohashSchema } from "$lib/api/geohash";
-import { mediaHashPublicSchema } from "$lib/api/media";
+import { geohashSchema } from "$lib/model/geohash";
+import { mediaHashPublicSchema } from "$lib/model/media";
 import { urlSearchParamsCodec } from "$lib/utils";
 
 export const searchProfileSchema = z.object({

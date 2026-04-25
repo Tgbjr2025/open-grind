@@ -50,7 +50,7 @@ Previously shared [albums in chat](/grindr-api/messaging/messages#album) inherit
 - `thumbUrl` — string, unblurred preview, see [Media -> Signed CDN files](/grindr-api/media/signed-cdn-files)
 - `url` — string, original file, see [Media -> Signed CDN files](/grindr-api/media/signed-cdn-files), may be `""` if `remainingViews` is 0
 - `processing` — boolean
-- `rejectionId` - unknown or `null`
+- `rejectionId` — unknown or `null`
 
 ## AlbumCoverUrl
 
@@ -453,10 +453,10 @@ Body:
 
 Response:
 
-- `profileFeeds` - array of objects
+- `profileFeeds` — array of objects
   - `profileId` — integer
   - `paywallStatus` — string, e.g. `ALLOW`
-  - `seen` - boolean
+  - `seen` — boolean
   - `content` — object
   - `profile` — object
     - `profileId` — long integer
@@ -464,7 +464,7 @@ Response:
     - `profileUrl` — string or `null`
     - `onlineUntil` — unknown or `null`
     - `distanceKm` — float or `null`
-- `sharedAlbums` - array of objects
+- `sharedAlbums` — array of objects
   - *everything from [AlbumPreview](#albumpreview)*
   - `albumViewable` — boolean
   - `albumVersion` — integer
@@ -484,9 +484,9 @@ Response:
     - `profileUrl` — string or `null`
     - `onlineUntil` — unknown or `null`
     - `distanceKm` — float or `null`
-- `experimentStatus` - number
-- `nonEmptyPersonalAlbumCount` - number
-- `emptyAlbumId` - `null`
+- `experimentStatus` — number
+- `nonEmptyPersonalAlbumCount` — number
+- `emptyAlbumId` — `null`
 
 ## Pressie albums feed paywall
 
@@ -498,7 +498,7 @@ No body.
 
 Response:
 
-- `albumPaywallContent` - array of objects
+- `albumPaywallContent` — array of objects
   - `albumId` — long integer
   - `profile` — object
     - `profileId` — long integer

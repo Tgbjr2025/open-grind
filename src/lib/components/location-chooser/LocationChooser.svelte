@@ -5,7 +5,7 @@
 	import * as Dialog from "$lib/components/ui/dialog";
 	import GeoMapPicker from "$lib/components/location-chooser/GeoMapPicker.svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
-	import { encodeGeohash } from "$lib/api/geohash";
+	import { encodeGeohash } from "$lib/model/geohash";
 
 	let {
 		onSubmit,

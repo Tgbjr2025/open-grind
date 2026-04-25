@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { meetAtOptions } from "$lib/api/profile";
+	import { meetAtOptions } from "$lib/model/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {

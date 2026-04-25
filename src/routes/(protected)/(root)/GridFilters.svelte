@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type z from "zod";
-	import { onMount } from "svelte";
 
 	import { Button } from "$lib/components/ui/button";
 	import * as Sheet from "$lib/components/ui/sheet";
@@ -29,7 +28,7 @@
 		setPreferences,
 	} from "$lib/app-data/preferences.svelte";
 
-	let open = $state(true);
+	let open = $state(false);
 
 	let filters: z.infer<typeof gridSearchFiltersSchema> = $state({
 		isFavorite: false,
@@ -97,7 +96,6 @@
 		const preferences = await getPreferences();
 		if (preferences?.gridSearchFilters) {
 			filters = preferences.gridSearchFilters;
-			console.log({ filters });
 		}
 	}
 </script>

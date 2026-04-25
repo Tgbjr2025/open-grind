@@ -52,7 +52,7 @@
 Only for [v3/cascade](#get-cascade-legacy):
 
 - `lastOnline` — unix timestamp in milliseconds
-- `photoMediaHashes` - array of strings, see [Media](/grindr-api/media/index#media)
+- `photoMediaHashes` — array of strings, see [Media](/grindr-api/media/index#media)
 - `lookingFor` — array of integers, see [Looking for](/grindr-api/users/profiles#looking-for)
 - `sexualPosition` — integer, see [Sexual position ID](/grindr-api/users/profiles#sexual-position-id), may be absent
 - `approximateDistance` — boolean

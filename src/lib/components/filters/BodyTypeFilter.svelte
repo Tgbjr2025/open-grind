@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { bodyTypes } from "$lib/api/profile";
+	import { bodyTypes } from "$lib/model/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {

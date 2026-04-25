@@ -40,7 +40,7 @@ When used in query, stringified as follows: `y2,x1,x2,y1`.
 - `showAge` — boolean
 - `showDistance` — boolean
 - `approximateDistance` — boolean
-- `lastChatTimestamp` — number, may be `0`
+- `lastChatTimestamp` — number, may be `0` or `null`
 - `isNew` — boolean
 - `lastUpdatedTime` — unix timestamp in milliseconds, may be `0`
 - `medias` — array of profile photos objects
@@ -70,8 +70,8 @@ When used in query, stringified as follows: `y2,x1,x2,y1`.
 - `bodyType` — number or `null`, see [Body type](#body-type)
 - `hivStatus` — number or `null`, see [HIV status](#hiv-status)
 - `lastTestedDate` — unix timestamp in milliseconds or `null`
-- `height` — number or `null`
-- `weight` — number or `null`
+- `height` — number in centimeters or `null`
+- `weight` — number in grams or `null`
 - `socialNetworks` — object
   - `twitter` — object, may be absent
     - `userId` — string or `null`
@@ -84,7 +84,7 @@ When used in query, stringified as follows: `y2,x1,x2,y1`.
 - `hashtags` — unknown array
 - `profileTags` — array of strings, see [Profile tags](#profile-tags)
 - `tapped` — boolean
-- `tapType` — boolean
+- `tapType` — boolean or `null`
 - `lastReceivedTapTimestamp` — number or `null`
 - `isTeleporting` — boolean
 - `isRoaming` — boolean
@@ -117,7 +117,7 @@ When used in query, stringified as follows: `y2,x1,x2,y1`.
 - `isInAList` — boolean
 - `showTribes` — boolean
 - `showPosition` — boolean
-- `tribesImInto` — null
+- `tribesImInto` — array of [Tribes](#tribes) IDs or null
 - `showVipBadge` — boolean
 
 ## Profile tags
@@ -242,7 +242,7 @@ Not to be confused with [HIV status](#hiv-status).
 
 ## Vaccines
 
-- 1 - COVID-19
+- 1 — COVID-19
 - 2 — Monkeypox
 - 3 — Meningitis
 
@@ -269,7 +269,7 @@ Query:
 
 Response:
 
-- `profiles` - array of [Profile](#profile), always with exactly one element
+- `profiles` — array of [Profile](#profile), always with exactly one element
 
 ## Get multiple profiles by ID
 

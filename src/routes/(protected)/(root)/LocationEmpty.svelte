@@ -5,7 +5,7 @@
 	import GpsFixIcon from "phosphor-svelte/lib/GpsFixIcon";
 	import * as Empty from "$lib/components/ui/empty";
 	import { Button } from "$lib/components/ui/button";
-	import { encodeGeohash } from "$lib/api/geohash";
+	import { encodeGeohash } from "$lib/model/geohash";
 	import { setPreferences } from "$lib/app-data/preferences.svelte";
 	import { platform } from "@tauri-apps/plugin-os";
 	import {

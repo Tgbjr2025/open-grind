@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { relationshipStatuses } from "$lib/api/profile";
+	import { relationshipStatuses } from "$lib/model/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {

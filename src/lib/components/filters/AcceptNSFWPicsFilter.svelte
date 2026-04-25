@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { acceptNSFWPicsOptions } from "$lib/api/profile";
+	import { acceptNSFWPicsOptions } from "$lib/model/profile";
 	import FilterSimpleArray from "./FilterSimpleArray.svelte";
 
 	let {

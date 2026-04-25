@@ -6,7 +6,7 @@ import {
 	meetAtOptionsSchema,
 	relationshipStatusSchema,
 	tribeSchema,
-} from "$lib/api/profile";
+} from "$lib/model/profile";
 import z from "zod";
 
 export const filterIsFavoriteSchema = z.boolean();
