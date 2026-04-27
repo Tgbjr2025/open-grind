@@ -13,6 +13,8 @@
 	import Ethnicity from "./Ethnicity.svelte";
 	import RelationshipStatus from "./RelationshipStatus.svelte";
 	import Tribes from "./Tribes.svelte";
+	import LookingFor from "./LookingFor.svelte";
+	import MeetAt from "./MeetAt.svelte";
 
 	const profile = $derived(getProfile(Number(page.params.profileId)));
 </script>
@@ -39,10 +41,12 @@
 			ethnicity,
 			relationshipStatus,
 			grindrTribes,
+			lookingFor,
+			meetAt,
 		} = profile}
 		<ImageCarousel />
 		<div class="flex flex-col p-4">
-			<h1 class="text-2xl">
+			<h1 class="text-2xl wrap-break-word">
 				{#if displayName !== null}
 					<span class="font-semibold">
 						{displayName}
@@ -65,12 +69,14 @@
 			{#if aboutMe !== null}
 				<AboutMe>{aboutMe}</AboutMe>
 			{/if}
-			{#if (genders !== null && genders.length > 0) || (pronouns !== null && pronouns.length > 0) || ethnicity !== null || relationshipStatus !== null || (grindrTribes !== null && grindrTribes.length > 0)}
+			{#if (genders !== null && genders.length > 0) || (pronouns !== null && pronouns.length > 0) || ethnicity !== null || relationshipStatus !== null || (grindrTribes !== null && grindrTribes.length > 0) || (lookingFor !== null && lookingFor.length > 0) || (meetAt !== null && meetAt.length > 0)}
 				<div class="flex flex-col gap-2 mt-4">
 					<Genders {genders} {pronouns} />
 					<Ethnicity {ethnicity} />
 					<RelationshipStatus {relationshipStatus} />
 					<Tribes tribes={grindrTribes} />
+					<LookingFor {lookingFor} />
+					<MeetAt {meetAt} />
 				</div>
 			{/if}
 		</div>

@@ -7,7 +7,7 @@
 	import ChatCircleIcon from "phosphor-svelte/lib/ChatCircleIcon";
 </script>
 
-<nav class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50">
+<nav class="fixed bottom-2 left-1/2 -translate-x-1/2 z-50 max-w-full overflow-auto no-scrollbar">
 	<div class={[tabsListVariants({ variant: "default" }), "[&>a>svg]:size-5!"]}>
 		<a href="/" data-active={page.route.id === "/(protected)/(root)"}>
 			<DotsNineIcon weight="fill" />
