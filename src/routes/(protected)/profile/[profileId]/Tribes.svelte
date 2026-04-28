@@ -13,8 +13,6 @@
 {#if tribes !== null && tribes.length > 0}
 	<ProfileField>
 		<UsersThreeIcon class="shrink-0" />
-		<ProfileValue>
-			{tribes.map((tribe) => allTribes[tribe]).join(", ")}
-		</ProfileValue>
+		{tribes.map((tribe) => allTribes[tribe]).join(", ")}
 	</ProfileField>
 {/if}

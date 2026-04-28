@@ -1,10 +1,18 @@
 <script lang="ts">
+	import ImageCarouselItem from "./ImageCarouselItem.svelte";
 </script>
 
 <div
-	class="w-full flex flex-col h-60 snap-y snap-mandatory *:snap-center overflow-auto"
+	class="w-full flex flex-col h-auto aspect-3/4 snap-y snap-mandatory *:snap-center overflow-auto carousel"
 >
-	<img src="https://placehold.co/600x400" alt="" draggable="false" />
-	<img src="https://placehold.co/600x400" alt="" draggable="false" />
-	<img src="https://placehold.co/600x400" alt="" draggable="false" />
+	<ImageCarouselItem />
+	<ImageCarouselItem />
+	<ImageCarouselItem />
 </div>
+
+<style lang="postcss">
+	@reference "$layout";
+	.carousel::-webkit-scrollbar {
+		display: none;
+	}
+</style>

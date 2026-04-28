@@ -10,13 +10,16 @@ const config = {
 	preprocess: vitePreprocess(),
 	compilerOptions: {
 		experimental: {
-			async: true
-		}
+			async: true,
+		},
 	},
 	kit: {
 		adapter: adapter({
 			fallback: "index.html",
 		}),
+		alias: {
+			$layout: "src/layout.css",
+		},
 	},
 };
 
