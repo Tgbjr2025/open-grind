@@ -37,19 +37,6 @@
 	let fromPos = $state({ left: 0, top: 0 });
 	let toPos = $state({ left: 0, top: 0 });
 
-	function onScroll(instant: boolean) {
-		expanded = window.scrollY === 0;
-		if (instant) {
-			expansion.set(expanded ? 1 : 0, {
-				duration: 0,
-			});
-		} else {
-			expansion.target = expanded ? 1 : 0;
-		}
-		fromPos = from.getBoundingClientRect();
-		toPos = to.getBoundingClientRect();
-	}
-
 	$effect(() => {
 		if (expansion.current === expansion.target) return;
 		untrack(() => {
@@ -66,7 +53,14 @@
 		});
 	});
 
-	onMount(() => onScroll(true));
+	let lastScrollY: number = $state(0);
+
+	onMount(() => {
+		expansion.set(window.scrollY > 0 ? 1 : 0, {
+			duration: 0,
+		});
+		lastScrollY = window.scrollY;
+	});
 
 	let booleanFilters = $state({
 		isFavorite: false,
@@ -93,7 +87,15 @@
 	);
 </script>
 
-<svelte:window onscroll={() => onScroll(false)} />
+<svelte:window
+	onscroll={(e) => {
+		expanded = window.scrollY - lastScrollY < 0;
+		expansion.target = expanded ? 1 : 0;
+		fromPos = from.getBoundingClientRect();
+		toPos = to.getBoundingClientRect();
+		lastScrollY = window.scrollY;
+	}}
+/>
 <ProgressiveBlur
 	class="fixed top-0 left-0 w-full z-10"
 	bgClass="bg-linear-to-b from-background to-transparent"

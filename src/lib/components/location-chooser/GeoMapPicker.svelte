@@ -20,7 +20,7 @@
 	let {
 		pinPos = $bindable(),
 	}: {
-		pinPos?: { lat: number; lng: number };
+		pinPos?: { lat: number; lon: number };
 	} = $props();
 
 	let map: LeafletMap | undefined = $state();
@@ -28,7 +28,7 @@
 	$effect(() => {
 		if (map) {
 			const onMapClick: LeafletMouseEventHandlerFn = (e) => {
-				pinPos = e.latlng;
+				pinPos = { lat: e.latlng.lat, lon: e.latlng.lng };
 			};
 			map.on("click", onMapClick);
 			return () => {
@@ -73,6 +73,22 @@
 			toast.error("Failed to search places");
 		}
 	});
+
+	let pendingCenter: { lat: number; lon: number } | undefined = $state();
+	export function centerAt({ lat, lon }: { lat: number; lon: number }) {
+		if (!map) {
+			pendingCenter = { lat, lon };
+		} else {
+			map.setView([lat, lon], 17);
+		}
+	}
+
+	$effect(() => {
+		if (pendingCenter && map) {
+			map.setView([pendingCenter.lat, pendingCenter.lon], 17);
+			pendingCenter = undefined;
+		}
+	});
 </script>
 
 <div class="w-[inherit] h-[inherit] relative">
@@ -94,7 +110,7 @@
 
 		{#if pinPos}
 			<Marker
-				latLng={pinPos}
+				latLng={[pinPos.lat, pinPos.lon]}
 				options={{
 					draggable: true,
 					icon: divIcon({
@@ -143,7 +159,7 @@
 								class="flex flex-col gap-0 items-start justify-start text-current cursor-pointer text-left h-auto"
 								variant="link"
 								onclick={() => {
-									pinPos = { lat: place.lat, lng: place.lon };
+									pinPos = { lat: place.lat, lon: place.lon };
 									map?.setView([place.lat, place.lon], 17);
 									showSearchResults = false;
 								}}

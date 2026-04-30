@@ -1,9 +1,14 @@
 <script lang="ts">
+	import { onMount } from "svelte";
 	import toast from "svelte-french-toast";
 	import { GpsFixIcon, PencilSimpleIcon } from "phosphor-svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { setPreferences } from "$lib/app-data/preferences.svelte";
+	import {
+		getPreferences,
+		setPreferences,
+	} from "$lib/app-data/preferences.svelte";
 	import LocationChooser from "$lib/components/location-chooser/LocationChooser.svelte";
+	import { decodeGeohash } from "$lib/model/geohash";
 
 	let {
 		onUpdate,
@@ -15,6 +20,7 @@
 		expansion: number;
 	} = $props();
 
+	let pinPos: { lat: number; lon: number } | undefined = $state();
 	let geoMapPickerOpen = $state(false);
 
 	function onSubmit(geohash: string) {
@@ -28,6 +34,26 @@
 				toast.error("Failed to save location");
 			});
 	}
+
+	onMount(() => {
+		getPreferences()
+			.then(({ geohash }) => {
+				if (geohash) {
+					pinPos = decodeGeohash(geohash);
+				}
+			})
+			.catch((e) => {
+				console.error(e);
+				toast.error("Failed to load location");
+				pinPos = undefined;
+			});
+	});
+
+	let locationChooser: LocationChooser;
+
+	$effect(() => {
+		if (geoMapPickerOpen && pinPos) locationChooser.centerAt(pinPos);
+	});
 </script>
 
 <Button
@@ -47,4 +73,9 @@
 		<GpsFixIcon weight="fill" />
 	</div>
 </Button>
-<LocationChooser {onSubmit} bind:open={geoMapPickerOpen} />
+<LocationChooser
+	{onSubmit}
+	bind:open={geoMapPickerOpen}
+	bind:this={locationChooser}
+	bind:pinPos
+/>

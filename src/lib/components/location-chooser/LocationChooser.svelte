@@ -10,21 +10,44 @@
 	let {
 		onSubmit,
 		open = $bindable(),
+		pinPos = $bindable(),
 	}: {
 		onSubmit: (geohash: string) => void;
 		open: boolean;
+		pinPos?:
+			| {
+					lat: number;
+					lon: number;
+			  }
+			| undefined;
 	} = $props();
 
 	const isDesktop = new MediaQuery("(min-width: 768px)");
 
-	let pinPos: LatLng | undefined = $state();
-
 	function onSubmitPin() {
 		if (!pinPos) return;
-		const geohash = encodeGeohash(pinPos.lat, pinPos.lng);
+		const geohash = encodeGeohash(pinPos.lat, pinPos.lon);
 		open = false;
 		void onSubmit(geohash);
 	}
+
+	let geoMapPicker: GeoMapPicker | undefined = $state();
+
+	let pendingCenter: { lat: number; lon: number } | undefined = $state();
+	export function centerAt({ lat, lon }: { lat: number; lon: number }) {
+		if (!geoMapPicker) {
+			pendingCenter = { lat, lon };
+		} else {
+			geoMapPicker.centerAt({ lat, lon });
+		}
+	}
+
+	$effect(() => {
+		if (pendingCenter && geoMapPicker) {
+			geoMapPicker.centerAt(pendingCenter);
+			pendingCenter = undefined;
+		}
+	});
 </script>
 
 {#if isDesktop.current}
@@ -38,7 +61,7 @@
 				class="h-full touch-manipulation rounded-lg overflow-clip flex-1"
 				data-vaul-no-drag
 			>
-				<GeoMapPicker bind:pinPos />
+				<GeoMapPicker bind:pinPos bind:this={geoMapPicker} />
 			</div>
 			<Dialog.Footer>
 				<Button type="submit" disabled={!pinPos} onclick={onSubmitPin}>
@@ -60,7 +83,7 @@
 				class="h-full touch-manipulation rounded-lg overflow-clip mt-4 mb-2"
 				data-vaul-no-drag
 			>
-				<GeoMapPicker bind:pinPos />
+				<GeoMapPicker bind:pinPos bind:this={geoMapPicker} />
 			</div>
 			<Drawer.Footer class="pt-2">
 				<Button type="submit" disabled={!pinPos} onclick={onSubmitPin}>
