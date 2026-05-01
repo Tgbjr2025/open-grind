@@ -91,41 +91,41 @@ Body:
 - Array of [Conversation IDs](#conversation-id)
 
 Response (array):
-- `conversationId` - string, e.g. `647135273:771038429`
-- `name` - string, profile name, may be an empty string, e.g. `""`
-- `participants` - array of objects
-    - `profileId` - integer, [Profile ID](/grindr-api/users/profiles#profilemin)
-    - `primaryMediaHash` - string or `null`, see [Media -> Public CDN files -> Profile Images](/grindr-api/media/public-cdn-files#profile-images)
-    - `lastOnline` - unix timestamp in milliseconds
-    - `distanceMetres` - float number or `null`
-  - `lastActivityTimestamp` - unix timestamp in milliseconds
-  - `unreadCount` - integer
-  - `preview` - nested object
-    - `conversationId` - nested object
-      - `value` - [Conversation ID](#conversation-id)
-    - `messageId` - string, see [Message](/grindr-api/messaging/messages#message) for format
-    - `chat1MessageId` - string with UUIDv4, second part of `messageId`
-    - `senderId` - integer, [Profile ID](/grindr-api/users/profiles#profilemin)
-    - `type` - [Message type](/grindr-api/messaging/messages#message-type)
-    - `chat1Type` - string, see [Message type](/grindr-api/messaging/messages#message-type)
-    - `text` - string or `null`, message text
-    - `url` - unknown, appears to be `null`
-    - `lat` - unknown, appears to be `null`
-    - `lon` - unknown, appears to be `null`
-    - `albumId` - integer, appears to be `null`
-    - `albumContentId` - unknown, appears to be `null`
-    - `albumContentReply` - unknown, appears to be `null`
-    - `duration` - unknown, appears to be `null`
-    - `imageHash` - unknown, appears to be `null`
-    - `photoContentReply` - unknown, appears to be `null`
-  - `muted` - boolean
-  - `pinned` - boolean
-  - `favorite` - boolean
-  - `context` - unknown, appears to be `null`
-  - `onlineUntil` - unknown, appears to be `null`
-  - `translatable` - boolean
-  - `rightNow` - string, e.g. `"NOT_ACTIVE"`
-  - `hasUnreadThrob` - boolean
+- `conversationId` — string, e.g. `647135273:771038429`
+- `name` — string, profile name, may be an empty string, e.g. `""`
+- `participants` — array of objects
+    - `profileId` — integer, [Profile ID](/grindr-api/users/profiles#profilemin)
+    - `primaryMediaHash` — string or `null`, see [Media -> Public CDN files -> Profile Images](/grindr-api/media/public-cdn-files#profile-images)
+    - `lastOnline` — unix timestamp in milliseconds
+    - `distanceMetres` — float number or `null`
+  - `lastActivityTimestamp` — unix timestamp in milliseconds
+  - `unreadCount` — integer
+  - `preview` — nested object
+    - `conversationId` — nested object
+      - `value` — [Conversation ID](#conversation-id)
+    - `messageId` — string, see [Message](/grindr-api/messaging/messages#message) for format
+    - `chat1MessageId` — string with UUIDv4, second part of `messageId`
+    - `senderId` — integer, [Profile ID](/grindr-api/users/profiles#profilemin)
+    - `type` — [Message type](/grindr-api/messaging/messages#message-type)
+    - `chat1Type` — string, see [Message type](/grindr-api/messaging/messages#message-type)
+    - `text` — string or `null`, message text
+    - `url` — unknown, appears to be `null`
+    - `lat` — unknown, appears to be `null`
+    - `lon` — unknown, appears to be `null`
+    - `albumId` — integer, appears to be `null`
+    - `albumContentId` — unknown, appears to be `null`
+    - `albumContentReply` — unknown, appears to be `null`
+    - `duration` — unknown, appears to be `null`
+    - `imageHash` — unknown, appears to be `null`
+    - `photoContentReply` — unknown, appears to be `null`
+  - `muted` — boolean
+  - `pinned` — boolean
+  - `favorite` — boolean
+  - `context` — unknown, appears to be `null`
+  - `onlineUntil` — unknown, appears to be `null`
+  - `translatable` — boolean
+  - `rightNow` — string, e.g. `"NOT_ACTIVE"`
+  - `hasUnreadThrob` — boolean
   
 
 ## Delete a conversation
@@ -227,7 +227,7 @@ GET /v5/chat/media/shared/images/with-me/{conversationId}
 
 Response:
 
-- `images` - array of [ChatImage](/grindr-api/messaging/messages#chatimage)
+- `images` — array of [ChatImage](/grindr-api/messaging/messages#chatimage)
 
 ## Refresh messages
 

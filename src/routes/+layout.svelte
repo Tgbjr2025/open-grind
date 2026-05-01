@@ -1,7 +1,10 @@
 <script lang="ts">
+	import "@fontsource-variable/ibm-plex-sans/wght.css";
+	import "@fontsource-variable/ibm-plex-sans/wght-italic.css";
 	import "../layout.css";
 	import favicon from "$lib/assets/favicon.png";
 	import { Toaster } from "svelte-french-toast";
+	import { IconContext } from "phosphor-svelte";
 
 	let {
 		children,
@@ -19,4 +22,7 @@
 		style: "background-color: var(--accent); color: var(--popover)",
 	}}
 />
-{@render children?.()}
+<!-- TODO: migrate to svelte-sonner (svelte-french-toast is dead) -->
+<IconContext values={{}}>
+	{@render children?.()}
+</IconContext>

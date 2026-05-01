@@ -10,6 +10,8 @@
 	<Alert.Description>
 		Password reset is not implemented yet, track <a
 			href="https://git.opengrind.org/open-grind/open-grind/issues/22"
+			target="_blank"
+			rel="noopener noreferrer"
 		>
 			#22
 		</a>.

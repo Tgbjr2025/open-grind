@@ -1,0 +1,35 @@
+<script lang="ts">
+	import FilterDropdown from "$lib/components/filters/FilterDropdown.svelte";
+	import { Slider } from "$lib/components/ui/slider";
+
+	let {
+		checked = $bindable(),
+		value = $bindable(),
+	}: { checked: boolean; value: number[] } = $props();
+</script>
+
+<div class="block space-y-3 w-full">
+	<FilterDropdown
+		id="weight"
+		label="Weight"
+		bind:checked
+		endLabel={`${value[0] === 40 ? "No min" : value[0] + " kg"} - ${
+			value[1] === 273 ? "No max" : value[1] + " kg"
+		}`}
+		contentClass="ps-7 h-5"
+	>
+		<Slider
+			type="multiple"
+			bind:value={
+				() => value,
+				(v) => {
+					checked = true;
+					value = v;
+				}
+			}
+			min={40}
+			max={273}
+			step={1}
+		/>
+	</FilterDropdown>
+</div>

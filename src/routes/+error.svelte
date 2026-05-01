@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import clippy from "$lib/assets/clippy.avif";
+	import { Tween } from "svelte/motion";
+	import toast from "svelte-french-toast";
 	import * as Empty from "$lib/components/ui/empty";
 	import { Button } from "$lib/components/ui/button";
 	import * as Tooltip from "$lib/components/ui/tooltip";
 	import QuestionMarkIcon from "phosphor-svelte/lib/QuestionMarkIcon";
 	import ExclamationMarkIcon from "phosphor-svelte/lib/ExclamationMarkIcon";
 	import ArrowUpRightIcon from "phosphor-svelte/lib/ArrowUpRightIcon";
-	import { Tween } from "svelte/motion";
-	import toast from "svelte-french-toast";
+	import clippy from "$lib/assets/clippy.avif";
 
 	let flip = $state(false);
 	let flipProgress = new Tween(0, { duration: 500 });
@@ -51,7 +51,7 @@
 				>
 					<div
 						class={[
-							"transform-3d relative transition-transform duration-500 rounded-full w-full h-full *:backface-hidden *:absolute *:top-0 *:left-0 *:size-full",
+							"transform-3d relative transition-transform duration-500 rounded-full size-full *:backface-hidden *:absolute *:top-0 *:left-0 *:size-full",
 							{
 								"-rotate-y-180": flip,
 							},
@@ -63,7 +63,7 @@
 
 						<Tooltip.Provider>
 							<img
-								class="rotate-y-180 w-full h-full rounded-full bg-neutral-200 select-none"
+								class="rotate-y-180 size-full rounded-full bg-neutral-200 select-none"
 								src={clippy}
 								alt="Clippy"
 							/>
@@ -78,7 +78,7 @@
 										<br /><br />
 										Would you like help?
 									</p>
-									<br /><br />
+									<br />
 									<p>Don't worry, Clippy would never</p>
 									<ul class="list-clippy ps-3.5">
 										<li>Sell your information</li>
@@ -133,6 +133,8 @@
 		<Button variant="link" class="text-muted-foreground" size="sm">
 			<a
 				href="https://git.opengrind.org/open-grind/open-grind/issues/new?title=%5BBUG%5D+Short+description+of+the+issue"
+				target="_blank"
+				rel="noopener noreferrer"
 			>
 				Report an issue <ArrowUpRightIcon class="inline" />
 			</a>

@@ -28,7 +28,7 @@
 - `lookingFor` — string, see [Looking for](/grindr-api/users/profiles#looking-for), optional
 - `relationshipStatuses` — string, see [Relationship status](/grindr-api/users/profiles#relationship-status), optional
 - `bodyTypes` — string, see [Body type](/grindr-api/users/profiles#body-type), optional
-- `sexualPositions` — string, see [Sexual position ID](/grindr-api/users/profiles#sexual-position-id), optional
+- `sexualPositions` — array of integers concatenated with a `,`, see [Sexual position ID](/grindr-api/users/profiles#sexual-position-id), optional
 - `meetAt` — string, see [Meet at](/grindr-api/users/profiles#meet-at), optional
 - `nsfwPics` — string, see [Accept NSFW pics](/grindr-api/users/profiles#accept-nsfw-pics), optional
 - `tags` — string, see [Profile tags](/grindr-api/users/profiles#profile-tags), optional
@@ -52,7 +52,7 @@
 Only for [v3/cascade](#get-cascade-legacy):
 
 - `lastOnline` — unix timestamp in milliseconds
-- `photoMediaHashes` - array of strings, see [Media](/grindr-api/media/index#media)
+- `photoMediaHashes` — array of strings, see [Media](/grindr-api/media/index#media)
 - `lookingFor` — array of integers, see [Looking for](/grindr-api/users/profiles#looking-for)
 - `sexualPosition` — integer, see [Sexual position ID](/grindr-api/users/profiles#sexual-position-id), may be absent
 - `approximateDistance` — boolean
@@ -120,9 +120,9 @@ Only for [v3/cascade](#get-cascade-legacy):
 
 Only for [v4/cascade](#get-cascade):
 
-- `age` — integer
-- `heightCm` — integer
-- `weightGrams` — integer
+- `age` — integer, optional
+- `heightCm` — integer, optional
+- `weightGrams` — integer, optional
 - `bodyType` — integer, see [Body type](/grindr-api/users/profiles#body-type)
 
 ### `explore_aggregation_v1`
@@ -235,13 +235,13 @@ GET /v7/search
 - `heightMaximum` — float, optional
 - `weightMinimum` — float, optional
 - `weightMaximum` — float, optional
-- `grindrTribesIds` — string, see [Tribes](/grindr-api/users/profiles#tribes), optional
-- `lookingForIds` — string, see [Looking for](/grindr-api/users/profiles#looking-for), optional
-- `relationshipStatusIds` — string, see [Relationship status](/grindr-api/users/profiles#relationship-status), optional
+- `grindrTribesIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Tribes](/grindr-api/users/profiles#tribes), optional
+- `lookingForIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Looking for](/grindr-api/users/profiles#looking-for), optional
+- `relationshipStatusIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Relationship status](/grindr-api/users/profiles#relationship-status), optional
 - `bodyTypeIds` — string, see [Body type](/grindr-api/users/profiles#body-type), optional
-- `sexualPositionIds` — string, see [Sexual position](#position-id), optional
-- `meetAtIds` — string, see [Meet at](/grindr-api/users/profiles#meet-at), optional
-- `nsfwIds` — string, see [Accept NSFW pics](/grindr-api/users/profiles#accept-nsfw-pics), optional
+- `sexualPositionIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Sexual position](#position-id), optional
+- `meetAtIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Meet at](/grindr-api/users/profiles#meet-at), optional
+- `nsfwIds` — array of integers concatenated with a `,`, `-1` means "Not Specified", see [Accept NSFW pics](/grindr-api/users/profiles#accept-nsfw-pics), optional
 - `profileTags` — string, see [Profile tags](/grindr-api/users/profiles#profile-tags), optional
 - `searchAfterDistance` — string, optional
 - `searchAfterProfileId` — string, optional
@@ -264,7 +264,7 @@ Response:
     - `type` — integer, WIP
     - `state` — integer, WIP
   - `profileId` — integer
-  - `profileImageMediaHash` — [Media hash](/grindr-api/media/index#media) or `null
+  - `profileImageMediaHash` — [Media hash](/grindr-api/media/index#media) or `null`
   - `profileTags` — array of [Profile tags](/grindr-api/users/profiles#profile-tags)
   - `seen` — unix timestamp in milliseconds
   - `showAge` —  boolean

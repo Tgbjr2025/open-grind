@@ -1,5 +1,5 @@
 use reqwest::Client;
-use tokio::sync::RwLock;
+use tokio::sync::{Mutex, RwLock};
 
 use crate::error::AppError;
 
@@ -11,6 +11,7 @@ pub const BASE_URL: &str = "https://grindr.mobi";
 pub struct GrindrClient {
     pub(super) http: Client,
     pub(super) session: RwLock<Option<Session>>,
+    pub(super) refresh_lock: Mutex<()>,
 }
 
 impl GrindrClient {
@@ -25,6 +26,7 @@ impl GrindrClient {
         Ok(Self {
             http,
             session: RwLock::new(session),
+            refresh_lock: Mutex::new(()),
         })
     }
 }

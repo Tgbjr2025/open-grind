@@ -10,6 +10,8 @@
 	<Alert.Description>
 		Registration is not implemented yet, track <a
 			href="https://git.opengrind.org/open-grind/open-grind/issues/21"
+			target="_blank"
+			rel="noopener noreferrer"
 		>
 			#21
 		</a>.

@@ -36,5 +36,6 @@
 	},
 	"editor.quickSuggestions": {
 		"strings": "on"
-	}
+	},
+	"paths"
 }

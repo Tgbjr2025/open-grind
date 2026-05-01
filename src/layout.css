@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn-svelte/tailwind.css";
-@import "@fontsource-variable/ibm-plex-sans";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -117,6 +116,8 @@
 	--radius-2xl: calc(var(--radius) * 1.8);
 	--radius-3xl: calc(var(--radius) * 2.2);
 	--radius-4xl: calc(var(--radius) * 2.6);
+
+	--breakpoint-xs: 384px;
 }
 
 @layer base {
@@ -137,4 +138,20 @@ body {
 	overscroll-behavior: none;
 	user-select: none;
 	-webkit-user-select: none;
+}
+
+a {
+	-webkit-user-drag: none;
+}
+
+[class^="scroll-lock-"] {
+	overflow: hidden;
+}
+
+*[data-tauri-drag-region] {
+	background: red;
+}
+
+.scrollbar-thin {
+	scrollbar-width: thin;
 }
