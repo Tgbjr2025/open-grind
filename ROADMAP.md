@@ -26,8 +26,8 @@
   - [ ] Taps
   - [ ] Reports
 - [X] Grid
-  - [ ] Limit bypass
-  - [ ] Filtering
+  - [X] Limit bypass
+  - [X] Filtering
 - [ ] Interest section
   - [ ] Views history
   - [ ] Profile view self-reporting
