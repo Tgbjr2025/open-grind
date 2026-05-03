@@ -31,7 +31,7 @@
 	bgClass="bg-linear-to-b max-xs:from-background xs:from-card to-transparent"
 	contentClass="flex items-center h-full"
 >
-	<a href="/chat" class="flex items-center justify-center w-19">
+	<a href="/chat" class="flex items-center justify-center w-19 h-full">
 		<ArrowLeftIcon size={32} />
 	</a>
 	{#await conversation}

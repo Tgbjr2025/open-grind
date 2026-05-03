@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Skeleton } from "$lib/components/ui/skeleton";
-	import Message from "./Message.svelte";
+	import Message from "./message/Message.svelte";
 	import type { getConversation } from "./messages";
 
 	let {
@@ -37,7 +37,7 @@
 		{/each}
 	{:catch error}
 		<p
-			class="flex-1 m-auto whitespace-pre bg-card ring ring-card-foreground/10 rounded-lg p-2 select-text overflow-x-auto w-full"
+			class="flex-1 m-auto whitespace-pre bg-card ring ring-card-foreground/10 rounded-lg p-2 select-text overflow-x-auto w-full font-mono"
 		>
 			{#if error instanceof Error}
 				{error.message}

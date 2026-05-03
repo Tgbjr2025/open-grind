@@ -30,19 +30,23 @@ export const textMessageSchema = messageBaseSchema.safeExtend({
 	}),
 });
 
+export type TextMessage = z.infer<typeof textMessageSchema>;
+
 export const albumMessageSchema = messageBaseSchema.safeExtend({
 	type: z.enum(["Album", "ExpiringAlbum", "ExpiringAlbumV2"]),
 	body: z.object({
 		...albumPreviewSchema.shape,
 		...albumExpirationSchema.shape,
-		coverUrl: mediaHashPrivateSchema,
+		coverUrl: z.url(),
 		ownerProfileId: z.number().int().nonnegative().nullable(),
 		isViewable: z.boolean(),
 		hasVideo: z.boolean(),
 		hasPhoto: z.boolean(),
-		viewableUntil: unixTimestampMsSchema.nullable(),
+		viewableUntil: unixTimestampMsSchema.nullable().optional(),
 	}),
 });
+
+export type AlbumMessage = z.infer<typeof albumMessageSchema>;
 
 const imageBaseMessageSchema = messageBaseSchema.safeExtend({
 	body: z.object({
@@ -63,6 +67,8 @@ export const imageMessageSchema = imageBaseMessageSchema.safeExtend({
 	}),
 });
 
+export type ImageMessage = z.infer<typeof imageMessageSchema>;
+
 export const expiringImageMessageSchema = imageBaseMessageSchema.safeExtend({
 	type: z.literal("ExpiringImage"),
 	body: z.object({
@@ -70,6 +76,8 @@ export const expiringImageMessageSchema = imageBaseMessageSchema.safeExtend({
 		viewsRemaining: z.number().int().nonnegative().nullable(),
 	}),
 });
+
+export type ExpiringImageMessage = z.infer<typeof expiringImageMessageSchema>;
 
 export const messageSchema = z.discriminatedUnion("type", [
 	textMessageSchema,

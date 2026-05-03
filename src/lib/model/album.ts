@@ -18,15 +18,19 @@ export const albumDetailsSchema = z.object({
 	updatedAt: z.iso.datetime(),
 });
 
-export const albumExpirationTypeSchema = z.enum([
-	"INDEFINITE",
-	"ONCE",
-	"TEN_MINUTES",
-	"ONE_HOUR",
-	"ONE_DAY",
-]);
+export const AlbumExpiration = {
+	INDEFINITE: 0,
+	ONCE: 1,
+	TEN_MINUTES: 2,
+	ONE_HOUR: 3,
+	ONE_DAY: 4,
+} as const;
+
+export const albumExpirationTypeSchema = z.enum(AlbumExpiration);
+
+export type AlbumExpirationType = z.infer<typeof albumExpirationTypeSchema>;
 
 export const albumExpirationSchema = z.object({
 	expiresAt: unixTimestampMsSchema.nullable(),
-	expirationType: albumExpirationTypeSchema,
+	expirationType: albumExpirationTypeSchema.optional(),
 });
