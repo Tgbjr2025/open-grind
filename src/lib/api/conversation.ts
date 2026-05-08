@@ -1,7 +1,24 @@
 import z from "zod";
 import { fetchRest } from "$lib/api";
 import { fullConversationSchema } from "$lib/model/conversation";
-import { apiResponseMessageSchema } from "$lib/model/message";
+import { apiResponseMessageSchema, messageSchema } from "$lib/model/message";
+
+const conversationsSchema = z.object({
+	entries: z.array(fullConversationSchema),
+	nextPage: z.number().nullable(),
+});
+
+const conversationMessagesSchema = z.object({
+	messages: z.array(apiResponseMessageSchema),
+	profile: z.object({
+		distance: z.number().nullable(),
+		mediaHash: z.string().nullable(),
+		name: z.string().nullable(),
+		onlineUntil: z.number().nullable(),
+		profileId: z.number().int(),
+		showDistance: z.boolean(),
+	}),
+});
 
 export async function getConversations(page: number = 1) {
 	const conversations = await fetchRest(
@@ -9,16 +26,7 @@ export async function getConversations(page: number = 1) {
 		{
 			method: "POST",
 		},
-	)
-		.then((res) => res.json())
-		.then((res) =>
-			z
-				.object({
-					entries: z.array(fullConversationSchema),
-					nextPage: z.number().nullable(),
-				})
-				.parse(res),
-		);
+	).then((res) => res.jsonParsed(conversationsSchema));
 	return conversations;
 }
 
@@ -29,22 +37,26 @@ export async function getConversationMessages(conversationId: string) {
 		{
 			method: "GET",
 		},
-	)
-		.then((res) => res.json())
-		.then((res) =>
-			z
-				.object({
-					messages: z.array(apiResponseMessageSchema),
-					profile: z.object({
-						distance: z.number().nullable(),
-						mediaHash: z.string().nullable(),
-						name: z.string().nullable(),
-						onlineUntil: z.number().nullable(),
-						profileId: z.number().int(),
-						showDistance: z.boolean(),
-					}),
-				})
-				.parse(res),
-		);
+	).then((res) => res.jsonParsed(conversationMessagesSchema));
 	return messages;
+}
+
+export async function sendMessage({
+	toUserId,
+	message,
+}: {
+	toUserId: number;
+	message: z.infer<typeof messageSchema>;
+}) {
+	await fetchRest("/v4/chat/message/send", {
+		method: "POST",
+		body: {
+			type: message.type,
+			target: {
+				type: "Direct",
+				targetId: toUserId,
+			},
+			body: message.body,
+		},
+	});
 }

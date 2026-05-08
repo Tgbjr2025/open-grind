@@ -5,11 +5,11 @@
 	import * as Avatar from "$lib/components/ui/avatar";
 	import { Skeleton } from "$lib/components/ui/skeleton";
 	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
+	import type { Message as MessageType } from "$lib/model/message";
+	import { sendMessage } from "$lib/api/conversation";
 	import { getConversation } from "./messages";
 	import MessagesList from "./MessagesList.svelte";
 	import MessageComposer from "./MessageComposer.svelte";
-	import { fetchRest } from "$lib/api";
-	import type { Message as MessageType } from "$lib/model/message";
 
 	let { data }: import("./$types").PageProps = $props();
 
@@ -37,16 +37,9 @@
 				text,
 			},
 		};
-		await fetchRest("/v4/chat/message/send", {
-			method: "POST",
-			body: {
-				type: message.type,
-				target: {
-					type: "Direct",
-					targetId: profileId,
-				},
-				body: message.body,
-			},
+		await sendMessage({
+			toUserId: profileId,
+			message,
 		});
 		conversation = fetchConversation(); // TODO: websockets
 	}
