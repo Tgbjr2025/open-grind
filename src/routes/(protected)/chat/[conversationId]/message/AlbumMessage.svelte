@@ -25,23 +25,35 @@
 		media.cornerClass,
 	]);
 
-	let open = $state(false);
-	let loading = $state(false);
-	let album:
-		| (AlbumContentResponse & {
-				content: (AlbumContentResponse["content"][number] & {
-					width: number;
-					height: number;
-				})[];
-		  })
-		| null = $state(null);
+	type LoadedAlbum = AlbumContentResponse & {
+		content: (AlbumContentResponse["content"][number] & {
+			width: number;
+			height: number;
+		})[];
+	};
+
+	type AlbumState =
+		| { status: "idle" }
+		| { status: "loading" }
+		| { status: "open"; album: LoadedAlbum };
+
+	let albumState = $state<AlbumState>({ status: "idle" });
+	let cachedAlbum: LoadedAlbum | null = null;
+
+	function openAlbum() {
+		if (cachedAlbum) {
+			albumState = { status: "open", album: cachedAlbum };
+		} else {
+			albumState = { status: "loading" };
+		}
+	}
 
 	$effect(() => {
-		if (open && !album) {
-			async function load() {
-				loading = true;
-				try {
-					album = await getAlbumContent(message.albumId).then(async (res) => ({
+		if (albumState.status !== "loading") return;
+		(async () => {
+			try {
+				const loaded = await getAlbumContent(message.albumId).then(
+					async (res) => ({
 						...res,
 						content: await Promise.all(
 							res.content.map(async (slide) => {
@@ -86,47 +98,36 @@
 								}
 							}),
 						),
-					}));
-
-				} catch (error) {
-					console.error(error);
-					toast.error("Failed to load album content");
-					open = false;
-				} finally {
-					loading = false;
-				}
+					}),
+				);
+				cachedAlbum = loaded;
+				albumState = { status: "open", album: loaded };
+			} catch (error) {
+				console.error(error);
+				toast.error("Failed to load album content");
+				albumState = { status: "idle" };
 			}
-			load();
-		}
+		})();
 	});
 
 	$effect(() => {
-		if (!open || !album) return;
-		let lightbox = new PhotoSwipeLightbox({
+		if (albumState.status !== "open") return;
+		const { album } = albumState;
+		const lightbox = new PhotoSwipeLightbox({
 			showHideAnimationType: "fade",
 			pswpModule: () => import("photoswipe"),
 			mainClass: `pswp--buttons-visible`,
 		});
-		lightbox.addFilter("numItems", () => {
-			return album?.content.length ?? 0;
-		});
+		lightbox.addFilter("numItems", () => album.content.length);
 		lightbox.addFilter("itemData", (_, index) => {
-			if (!album) throw new Error("Album not loaded");
 			const { url, width, height } = album.content[index];
-			return {
-				src: url,
-				width,
-				height,
-				// TODO: thumburl?
-			};
+			return { src: url, width, height };
 		});
 		lightbox.on("contentLoad", (event) => {
 			const { content } = event;
-
-			const slide = album?.content[content.index];
+			const slide = album.content[content.index];
 			if (slide?.contentType.startsWith("video/")) {
 				event.preventDefault();
-
 				content.element = document.createElement("div");
 				const video = document.createElement("video");
 				video.src = slide.url;
@@ -134,24 +135,17 @@
 				video.playsInline = true;
 				video.className = "max-w-full max-h-[80vh]";
 				content.element.appendChild(video);
-
 				content.state = "loading";
-
 				if (video.readyState >= 3) {
 					content.onLoaded();
 				} else {
-					video.addEventListener("loadeddata", () => {
-						content.onLoaded();
-					});
-
-					video.addEventListener("error", (event) => {
-						content.onError();
-					});
+					video.addEventListener("loadeddata", () => content.onLoaded());
+					video.addEventListener("error", () => content.onError());
 				}
 			}
 		});
 		lightbox.on("closingAnimationEnd", () => {
-			open = false;
+			albumState = { status: "idle" };
 		});
 		lightbox.init();
 		lightbox.loadAndOpen(0);
@@ -164,10 +158,13 @@
 		class={[
 			className,
 			contentClass,
-			{ "cursor-pointer": !loading && !open, "opacity-50": loading },
+			{
+				"cursor-pointer": albumState.status === "idle",
+				"opacity-50": albumState.status === "loading",
+			},
 		]}
-		onclick={() => (open = true)}
-		disabled={loading || open}
+		onclick={openAlbum}
+		disabled={albumState.status !== "idle"}
 		bind:this={media.el}
 	>
 		<img
