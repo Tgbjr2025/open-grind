@@ -87,15 +87,14 @@ mod tests {
     #[test]
     fn default_headers_include_grindr_device_identity() {
         let headers = build_default_headers(&test_device(), "Free");
+        let expected_user_agent =
+            format!("grindr3/{APP_VERSION};{BUILD_NUMBER};Free;Android 14;Pixel 8;Google");
 
         assert_eq!(
             headers.get("L-Device-Info").unwrap(),
             "device123;GLOBAL;2;8026152960;1080x2400;ad-id-123"
         );
-        assert_eq!(
-            headers.get("User-Agent").unwrap(),
-            "grindr3/26.7.0.159416;147239;Free;Android 14;Pixel 8;Google"
-        );
+        assert_eq!(headers.get("User-Agent").unwrap(), expected_user_agent.as_str());
         assert_eq!(headers.get("requireRealDeviceInfo").unwrap(), "true");
     }
 
@@ -103,7 +102,7 @@ mod tests {
     fn default_headers_include_locale_timezone_and_json_accepts() {
         let headers = build_default_headers(&test_device(), "Unlimited");
 
-        assert_eq!(headers.get("L-Time-Zone").unwrap(), "Europe/Madrid");
+        assert_eq!(headers.get("L-Time-Zone").unwrap(), TIMEZONE);
         assert_eq!(headers.get("L-Locale").unwrap(), "en_US");
         assert_eq!(headers.get("Accept-Language").unwrap(), "en-US");
         assert_eq!(headers.get("Accept").unwrap(), "application/json");
