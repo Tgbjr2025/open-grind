@@ -2,7 +2,7 @@
 	import { format } from "date-fns";
 	import { getMessageContext } from "./context";
 
-	const { timestamp, msgOut } = getMessageContext()();
+	const { timestamp, msgOut } = $derived(getMessageContext()());
 </script>
 
 <!-- TODO: read indicator -->

@@ -4,34 +4,25 @@
 	import PhotoSwipeLightbox from "photoswipe/lightbox";
 	import { ImagesIcon, LockIcon, VideoIcon } from "phosphor-svelte";
 	import type { AlbumMessage } from "$lib/model/message";
-	import { getMessageContext, getMessageMetaContext } from "./context";
+	import { MessageMediaState } from "./message-media.svelte";
 	import { getAlbumContent, type AlbumContentResponse } from "$lib/api/album";
 
 	let { message }: { message: AlbumMessage["body"] } = $props();
 
-	const { lastInStack, msgOut } = $derived(getMessageContext()());
-	const { clone, setRef, adornments } = $derived(getMessageMetaContext()());
-
-	let el: HTMLElement | null = $state(null);
-	$effect(() => {
-		setRef(el ?? null);
-	});
+	const media = new MessageMediaState();
 
 	const className: import("svelte/elements").ClassValue = $derived([
 		"aspect-3/4 h-auto relative",
 		{
 			"ring ring-accent": message.hasUnseenContent,
-			"w-2/5 min-w-35 max-w-60 ms-3": !clone,
-			"size-full": clone,
+			"w-2/5 min-w-35 max-w-60 ms-3": !media.clone,
+			"size-full": media.clone,
 		},
 	]);
 
 	const contentClass: import("svelte/elements").ClassValue = $derived([
 		"rounded-xl",
-		{
-			"rounded-es-[6px]": lastInStack && !msgOut,
-			"rounded-ee-[6px]": lastInStack && msgOut,
-		},
+		media.cornerClass,
 	]);
 
 	let open = $state(false);
@@ -96,7 +87,7 @@
 							}),
 						),
 					}));
-					console.log(album);
+
 				} catch (error) {
 					console.error(error);
 					toast.error("Failed to load album content");
@@ -177,7 +168,7 @@
 		]}
 		onclick={() => (open = true)}
 		disabled={loading || open}
-		bind:this={el}
+		bind:this={media.el}
 	>
 		<img
 			src={message.coverUrl}
@@ -210,16 +201,16 @@
 				{/if}
 			</div>
 		</div>
-		{@render adornments?.()}
+		{@render media.adornments?.()}
 	</button>
 {:else}
-	<div class={[className, contentClass]} bind:this={el}>
+	<div class={[className, contentClass]} bind:this={media.el}>
 		<div
 			class="size-full flex justify-center items-center bg-card-foreground/10 rounded-lg"
 		>
 			<LockIcon weight="fill" size={36} color="var(--color-neutral-600)" />
 		</div>
-		{@render adornments?.()}
+		{@render media.adornments?.()}
 	</div>
 {/if}
 

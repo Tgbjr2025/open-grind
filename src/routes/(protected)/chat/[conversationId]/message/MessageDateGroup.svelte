@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { format, isToday, startOfToday } from "date-fns";
-	import { getMessageContext } from "./context";
 
 	let { dayStart }: { dayStart: number } = $props();
-
-	const { firstInStack, lastInStack, indexInStack, msgOut } = $derived(
-		getMessageContext()(),
-	);
 </script>
 
 <span class="text-center text-xs text-muted-foreground mb-4">

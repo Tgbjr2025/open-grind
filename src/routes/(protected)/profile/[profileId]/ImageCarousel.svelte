@@ -19,6 +19,7 @@
 	let gallery: HTMLDivElement | null = $state(null);
 
 	$effect(() => {
+		if (!gallery) return;
 		let lightbox = new PhotoSwipeLightbox({
 			gallery,
 			children: ".item",

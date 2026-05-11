@@ -3,12 +3,10 @@ import { redirect } from "@sveltejs/kit";
 import type { LayoutLoad } from "./$types";
 
 export const load: LayoutLoad = async () => {
-	console.log("Checking auth state...");
 	const profileId = await callMethod("auth_state").catch((error) => {
 		console.error(error);
 		return null;
 	});
-	console.log("Auth state:", profileId);
 	if (profileId === null) {
 		throw redirect(303, "/auth/sign-in");
 	}
