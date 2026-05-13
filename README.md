@@ -18,7 +18,7 @@ PGP Public Key: <https://opengrind.org/pgp> (`CB722EE967E4FCAD7C658FC69A1F7F5F59
 
 Android releases are additionally signed with Java KeyStore with the following SHA-256 fingerprint: `28:05:FD:D8:F0:BA:DB:94:24:D3:24:4C:5E:5B:34:73:CE:F5:B8:79:8E:C1:11:73:82:E8:9E:DA:45:C3:65:8C`
 
-Signing keys and verification instructions are documented in [KEYS.md](KEYS.md), itself signed by the PGP key above.
+Signing keys and verification instructions are documented in [KEYS.md](KEYS.md), itself signed by the PGP key above (verify with `gpg --verify KEYS.md.asc KEYS.md`).
 
 ## Development
 
