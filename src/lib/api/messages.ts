@@ -1,6 +1,11 @@
 import z from "zod";
 import { fetchRest } from "$lib/api";
-import { apiResponseMessageSchema, messageSchema } from "$lib/model/message";
+import {
+	apiResponseMessageSchema,
+	messageSchema,
+	type ApiResponseMessage,
+} from "$lib/model/message";
+import type { Conversation } from "$lib/model/conversation";
 
 const conversationMessagesSchema = z.object({
 	messages: z.array(apiResponseMessageSchema),
@@ -55,8 +60,8 @@ export async function reactToMessage({
 	messageId,
 	reactionType,
 }: {
-	conversationId: string;
-	messageId: string;
+	conversationId: Conversation["data"]["conversationId"];
+	messageId: ApiResponseMessage["messageId"];
 	reactionType: number;
 }) {
 	return await fetchRest("/v4/chat/message/reaction", {
@@ -69,17 +74,12 @@ export async function reactToMessage({
 	});
 }
 
-export async function markConversationAsRead({
+export async function deleteMessageForMe({
 	conversationId,
-	messageId = "0:00000000-0000-0000-0000-000000000000",
 }: {
-	conversationId: string;
-	messageId?: string;
+	conversationId: Conversation["data"]["conversationId"];
 }) {
-	return await fetchRest(
-		`/v4/chat/conversation/${conversationId}/read/${messageId}`,
-		{
-			method: "POST",
-		},
-	);
+	return await fetchRest(`/v4/chat/conversation/${conversationId}`, {
+		method: "DELETE",
+	});
 }

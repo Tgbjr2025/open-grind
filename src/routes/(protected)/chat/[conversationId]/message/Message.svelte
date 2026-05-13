@@ -20,14 +20,18 @@
 		indexInStack,
 		stackLength,
 		dayStart,
+		status,
 		onReact,
+		onDelete,
 	}: {
 		message: ApiResponseMessage;
 		ourProfileId: number;
 		indexInStack: number;
 		stackLength: number;
 		dayStart?: number;
+		status?: "sent" | "pending" | "error";
 		onReact?: (reactionId: number) => void;
+		onDelete?: () => void;
 	} = $props();
 
 	const msgOut = $derived(message.senderId === ourProfileId);
@@ -189,7 +193,20 @@
 		{@render content()}
 	</div>
 	{#if lastInStack}
-		<MessageTime />
+		<span
+			class={[
+				"text-xs text-muted-foreground mx-3 mt-0.5",
+				{ "text-right": msgOut },
+			]}
+		>
+			{#if status === "pending"}
+				Sending...
+			{:else if status === "error"}
+				<span class="text-destructive"> Failed to send </span>
+			{:else}
+				<MessageTime />
+			{/if}
+		</span>
 	{/if}
 </div>
 
@@ -201,5 +218,6 @@
 		style={inheritedStyles}
 		textContent={message.type === "Text" ? message.body.text : undefined}
 		reactionAvailable={message.reactions.length === 0 && !msgOut}
+		{onDelete}
 	/>
 {/if}

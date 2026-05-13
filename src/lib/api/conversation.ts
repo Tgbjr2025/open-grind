@@ -16,3 +16,18 @@ export async function getConversations(page: number = 1) {
 	).then((res) => res.jsonParsed(conversationsSchema));
 	return conversations;
 }
+
+export async function markConversationAsRead({
+	conversationId,
+	messageId = "0:00000000-0000-0000-0000-000000000000",
+}: {
+	conversationId: string;
+	messageId?: string;
+}) {
+	return await fetchRest(
+		`/v4/chat/conversation/${conversationId}/read/${messageId}`,
+		{
+			method: "POST",
+		},
+	);
+}
