@@ -16,25 +16,26 @@
 
 	let {
 		message,
-		ourProfileId,
+		isOut,
 		indexInStack,
 		stackLength,
 		dayStart,
 		status,
 		onReact,
 		onDelete,
+		isRead,
 	}: {
 		message: ApiResponseMessage;
-		ourProfileId: number;
+		isOut: boolean;
 		indexInStack: number;
 		stackLength: number;
 		dayStart?: number;
 		status?: "sent" | "pending" | "error";
 		onReact?: (reactionId: number) => void;
 		onDelete?: () => void;
+		isRead: boolean | null;
 	} = $props();
 
-	const msgOut = $derived(message.senderId === ourProfileId);
 	const firstInStack = $derived(indexInStack === 0);
 	const lastInStack = $derived(indexInStack === stackLength - 1);
 
@@ -42,7 +43,7 @@
 		firstInStack,
 		lastInStack,
 		indexInStack,
-		msgOut,
+		isOut,
 		timestamp: message.timestamp,
 	}));
 
@@ -116,8 +117,8 @@
 		class={[
 			"absolute top-0 -translate-y-1/2 z-5",
 			{
-				"translate-x-1/2 right-0": !msgOut,
-				"-translate-x-1/2 left-0": msgOut,
+				"translate-x-1/2 right-0": !isOut,
+				"-translate-x-1/2 left-0": isOut,
 			},
 		]}
 	>
@@ -165,14 +166,14 @@
 	{/if}
 	<div
 		class={{
-			"*:me-auto *:float-start pe-3": !msgOut,
-			"*:ms-auto *:float-end ps-3": msgOut,
+			"*:me-auto *:float-start pe-3": !isOut,
+			"*:ms-auto *:float-end ps-3": isOut,
 		}}
 		role="button"
 		tabindex="0"
 		aria-label="Message"
 		ondblclick={(event) => {
-			if (!msgOut && onReact) {
+			if (!isOut && onReact) {
 				event.preventDefault();
 				onReact(1);
 			}
@@ -196,7 +197,7 @@
 		<span
 			class={[
 				"text-xs text-muted-foreground mx-3 mt-0.5",
-				{ "text-right": msgOut },
+				{ "text-right": isOut },
 			]}
 		>
 			{#if status === "pending"}
@@ -204,6 +205,13 @@
 			{:else if status === "error"}
 				<span class="text-destructive"> Failed to send </span>
 			{:else}
+				{#if isRead !== null}
+					{#if isRead}
+						Read
+					{:else}
+						Sent
+					{/if}
+				{/if}
 				<MessageTime />
 			{/if}
 		</span>
@@ -217,7 +225,7 @@
 		onClose={() => (contextMenuOpen = false)}
 		style={inheritedStyles}
 		textContent={message.type === "Text" ? message.body.text : undefined}
-		reactionAvailable={message.reactions.length === 0 && !msgOut}
+		reactionAvailable={message.reactions.length === 0 && !isOut}
 		{onDelete}
 	/>
 {/if}

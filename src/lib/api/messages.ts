@@ -1,13 +1,15 @@
 import z from "zod";
 import { fetchRest } from "$lib/api";
+import type { Conversation } from "$lib/model/conversation";
 import {
 	apiResponseMessageSchema,
 	messageSchema,
 	type ApiResponseMessage,
 } from "$lib/model/message";
-import type { Conversation } from "$lib/model/conversation";
+import { unixTimestampMsSchema } from "$lib/model/types";
 
 const conversationMessagesSchema = z.object({
+	lastReadTimestamp: unixTimestampMsSchema.nullable(),
 	messages: z.array(apiResponseMessageSchema),
 	profile: z.object({
 		distance: z.number().nullable(),
@@ -52,7 +54,7 @@ export async function sendMessage({
 			},
 			body: message.body,
 		},
-	});
+	}).then((res) => res.jsonParsed(apiResponseMessageSchema));
 }
 
 export async function reactToMessage({
@@ -76,10 +78,21 @@ export async function reactToMessage({
 
 export async function deleteMessageForMe({
 	conversationId,
+	messageId,
 }: {
 	conversationId: Conversation["data"]["conversationId"];
+	messageId: ApiResponseMessage["messageId"];
 }) {
-	return await fetchRest(`/v4/chat/conversation/${conversationId}`, {
-		method: "DELETE",
+	return await fetchRest(`/v4/chat/message/delete`, {
+		method: "POST",
+		body: {
+			conversationId,
+			messageId,
+		},
+	}).then((res) => {
+		if (res.status !== 200) {
+			console.log(res.json());
+			throw new Error("Failed to delete message");
+		}
 	});
 }

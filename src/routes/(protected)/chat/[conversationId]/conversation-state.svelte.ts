@@ -14,12 +14,13 @@ export type OptimisticMessage = ApiResponseMessage & {
 type Profile = Awaited<ReturnType<typeof getConversation>>["profile"];
 
 export class ConversationState {
-	messages = $state<OptimisticMessage[]>([]);
-	profile = $state<Profile | null>(null);
-	pageKey = $state<string | null>(null);
+	messages: OptimisticMessage[] = $state([]);
+	profile: Profile | null = $state(null);
+	pageKey: string | null = $state(null);
 	loading = $state(true);
 	loadingMore = $state(false);
-	error = $state<Error | null>(null);
+	error: Error | null = $state(null);
+	lastReadTimestamp: number | null = $state(null);
 
 	readonly conversationId: string;
 	readonly ourProfileId: number;
@@ -43,6 +44,7 @@ export class ConversationState {
 			}));
 			this.profile = result.profile;
 			this.pageKey = result.pageKey;
+			this.lastReadTimestamp = result.lastReadTimestamp;
 			this.#updatePreview(this.messages.at(0));
 			conversations.markRead(this.conversationId);
 		} catch (err) {
@@ -99,12 +101,16 @@ export class ConversationState {
 		message: MessageType;
 	}): Promise<void> {
 		try {
-			await sendMessage({
+			const { messageId } = await sendMessage({
 				toUserId: this.profile!.profileId,
 				message,
 			});
 			const msg = this.messages.find((m) => m.messageId === tempId);
-			if (msg) msg.status = "sent";
+			if (msg) {
+				msg.status = "sent";
+				msg.messageId = messageId;
+			}
+			void conversations.ensureLoaded(this.conversationId);
 		} catch {
 			const msg = this.messages.find((m) => m.messageId === tempId);
 			if (msg) msg.status = "error";
@@ -117,26 +123,39 @@ export class ConversationState {
 		conversations.updatePreview({
 			conversationId: this.conversationId,
 			preview: this.#previewFromMessage(message),
-			timestamp: message?.timestamp ?? 0,
+			timestamp: message?.timestamp ?? -1,
 		});
 	}
 
 	remove(messageId: string) {
 		const isLatest = this.messages.at(0)?.messageId === messageId;
-		const removedIndex = this.messages.findIndex(
-			(m) => m.messageId === messageId,
-		);
-		const removed = this.messages.splice(removedIndex, 1)[0];
-		if (isLatest) {
-			this.#updatePreview(this.messages.at(0));
+
+		let revert = () => {};
+		const index = this.messages.findIndex((m) => m.messageId === messageId);
+		if (index > -1) {
+			const [removed] = this.messages.splice(index, 1);
+			if (isLatest) this.#updatePreview(this.messages.at(0));
+			const revertDeleteMessage = () => {
+				this.messages.splice(index, 0, removed);
+				if (isLatest) this.#updatePreview(removed);
+			};
+
+			const isOnly = this.messages.length === 0;
+			let revertDeleteConversation = () => {};
+			if (isOnly) {
+				({ revert: revertDeleteConversation } = conversations.remove(
+					this.conversationId,
+				));
+			}
+
+			revert = () => {
+				revertDeleteConversation();
+				revertDeleteMessage();
+			};
 		}
+
 		return {
-			revert: () => {
-				if (removed) {
-					this.messages.splice(removedIndex, 0, removed);
-					if (isLatest) this.#updatePreview(removed);
-				}
-			},
+			revert,
 		};
 	}
 

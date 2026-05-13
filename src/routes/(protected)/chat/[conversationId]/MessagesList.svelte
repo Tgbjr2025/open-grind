@@ -39,7 +39,6 @@
 		}
 	});
 
-	// Scroll to bottom when a new message is prepended (optimistic send or incoming)
 	let lastFirstId = "";
 	$effect(() => {
 		const firstId = conversationState.messages.at(0)?.messageId ?? "";
@@ -113,19 +112,24 @@
 			<div class="h-0" use:observeSentinel></div>
 		{/if}
 		{#each messages.toReversed() as message (message.messageId)}
+			{@const isOut = message.senderId === conversationState.ourProfileId}
 			<Message
 				{message}
-				ourProfileId={conversationState.ourProfileId}
+				{isOut}
 				indexInStack={message.indexInStack}
 				stackLength={message.stackLength}
 				dayStart={message.dayStart}
 				status={message.status}
+				isRead={isOut && message.messageId === messages[0].messageId
+					? conversationState.lastReadTimestamp === message.timestamp
+					: null}
 				onDelete={async () => {
 					let revert: (() => void) | undefined;
 					try {
 						({ revert } = conversationState.remove(message.messageId));
 						await deleteMessageForMe({
 							conversationId: conversationState.conversationId,
+							messageId: message.messageId,
 						});
 					} catch {
 						toast.error("Failed to delete message");

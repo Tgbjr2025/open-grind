@@ -78,6 +78,7 @@ export function urlSearchParamsCodec<T extends z.ZodObject>(schema: T) {
 }
 
 export function formatTimeRelativeCustom(date: number) {
+	if (date < 0) return "";
 	const diff = Date.now() - date;
 	if (diff < 60 * 1000) return "Just now";
 	else if (diff < 60 * 60 * 1000) {

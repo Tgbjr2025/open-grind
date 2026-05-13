@@ -34,6 +34,42 @@ class ConversationsState {
 		}
 	}
 
+	async ensureLoaded(conversationId: string): Promise<void> {
+		if (this.entries.some((e) => e.data.conversationId === conversationId)) {
+			return;
+		}
+		try {
+			const result = await getConversations(1);
+			const newEntries = result.entries.filter(
+				(entry) =>
+					!this.entries.some(
+						(e) => e.data.conversationId === entry.data.conversationId,
+					),
+			);
+			this.entries.unshift(...newEntries);
+		} catch (error) {
+			console.error("Failed to sync conversation into sidebar", error);
+		}
+	}
+
+	remove(conversationId: string) {
+		const index = this.entries.findIndex(
+			(e) => e.data.conversationId === conversationId,
+		);
+		let revert = () => {};
+		if (index > -1) {
+			const [removed] = this.entries.splice(index, 1);
+			revert = () => {
+				if (removed) {
+					this.entries.splice(index, 0, removed);
+				}
+			};
+		}
+		return {
+			revert,
+		};
+	}
+
 	markRead(conversationId: string): void {
 		const entry = this.entries.find(
 			(e) => e.data.conversationId === conversationId,

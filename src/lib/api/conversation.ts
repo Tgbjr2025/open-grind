@@ -1,6 +1,6 @@
 import z from "zod";
 import { fetchRest } from "$lib/api";
-import { fullConversationSchema } from "$lib/model/conversation";
+import { fullConversationSchema, type Conversation } from "$lib/model/conversation";
 
 const conversationsSchema = z.object({
 	entries: z.array(fullConversationSchema),
@@ -30,4 +30,14 @@ export async function markConversationAsRead({
 			method: "POST",
 		},
 	);
+}
+
+export async function deleteConversationForMe({
+	conversationId,
+}: {
+	conversationId: Conversation["data"]["conversationId"];
+}) {
+	return await fetchRest(`/v4/chat/conversation/${conversationId}`, {
+		method: "DELETE",
+	});
 }
