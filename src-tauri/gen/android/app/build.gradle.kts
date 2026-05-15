@@ -65,6 +65,9 @@ android {
                 jniLibs.keepDebugSymbols.add("*/x86/*.so")
                 jniLibs.keepDebugSymbols.add("*/x86_64/*.so")
             }
+			if (hasKeystore) {
+				signingConfig = signingConfigs.getByName("release")
+			}
         }
         getByName("release") {
             isMinifyEnabled = true
