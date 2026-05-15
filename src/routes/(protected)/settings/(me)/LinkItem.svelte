@@ -4,6 +4,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as Dialog from "$lib/components/ui/dialog";
 	import * as Item from "$lib/components/ui/item";
+	import Link from "$lib/components/ui/link/Link.svelte";
 	import ButtonItemContent from "./ButtonItemContent.svelte";
 
 	let {
@@ -54,15 +55,13 @@
 				{@render content()}
 			</ButtonItemContent>
 		{:else}
-			<a
+			<Link
 				href={destination}
-				rel="nofollow noreferrer noopener"
-				target="_blank"
 				{...props}
 				class={["truncate", props.class, "flex-nowrap!"]}
 			>
 				{@render content()}
-			</a>
+			</Link>
 		{/if}
 	{/snippet}
 </Item.Root>

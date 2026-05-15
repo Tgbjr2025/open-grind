@@ -5,6 +5,7 @@
 		XLogoIcon,
 	} from "phosphor-svelte";
 
+	import Link from "$lib/components/ui/link/Link.svelte";
 	import { type SocialNetworks } from "$lib/model/profile";
 	import ProfileField from "./ProfileField.svelte";
 
@@ -22,31 +23,19 @@
 			<ProfileField>
 				{#if platform === "instagram"}
 					<InstagramLogoIcon class="shrink-0" />
-					<a
-						href="https://instagram.com/{social.userId}"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<Link href="https://instagram.com/{social.userId}">
 						{social.userId}
-					</a>
+					</Link>
 				{:else if platform === "twitter"}
 					<XLogoIcon class="shrink-0" />
-					<a
-						href="https://x.com/{social.userId}"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<Link href="https://x.com/{social.userId}">
 						{social.userId}
-					</a>
+					</Link>
 				{:else if platform === "facebook"}
 					<FacebookLogoIcon class="shrink-0" />
-					<a
-						href="https://facebook.com/profile.php?id={social.userId}"
-						target="_blank"
-						rel="noopener noreferrer"
-					>
+					<Link href="https://facebook.com/profile.php?id={social.userId}">
 						{social.userId}
-					</a>
+					</Link>
 				{/if}
 			</ProfileField>
 		{/if}
