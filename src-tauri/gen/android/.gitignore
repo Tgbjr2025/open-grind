@@ -20,3 +20,4 @@ keystore.properties
 /tauri.settings.gradle
 
 buildSrc/.kotlin/errors
+buildSrc/.kotlin/sessions

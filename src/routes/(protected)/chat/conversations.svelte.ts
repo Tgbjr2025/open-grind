@@ -120,6 +120,7 @@ class ConversationsState {
 	}
 
 	remove(conversationId: string) {
+		this.#messageCache.delete(conversationId);
 		const index = this.entries.findIndex(
 			(e) => e.data.conversationId === conversationId,
 		);
