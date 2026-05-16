@@ -38,12 +38,16 @@
 				permissions = await requestPermissions(["location"]);
 			}
 			if (permissions.location === "granted") {
-				const {
-					coords: { latitude, longitude },
-				} = await getCurrentPosition();
-				submitGeohash(encodeGeohash(latitude, longitude)).catch((error) =>
-					console.error(error),
-				);
+				try {
+					const {
+						coords: { latitude, longitude },
+					} = await getCurrentPosition();
+
+					await submitGeohash(encodeGeohash(latitude, longitude));
+				} catch (e) {
+					console.error(e);
+					toast.error("Failed to get current location");
+				}
 			} else {
 				toast.error(
 					"Location permission denied. Change this in your system settings to use this button.",

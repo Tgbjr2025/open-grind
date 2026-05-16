@@ -108,7 +108,7 @@
 <ProgressiveBlur
 	class="fixed top-0 left-0 w-full z-10"
 	bgClass="bg-linear-to-b from-background to-transparent"
-	contentClass="flex flex-col pt-4"
+	contentClass="flex flex-col pt-[calc(1rem+var(--safe-area-top))]"
 	direction="topToBottom"
 >
 	<div
