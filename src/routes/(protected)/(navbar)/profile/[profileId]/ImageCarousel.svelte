@@ -5,6 +5,7 @@
 	import z from "zod";
 	import type PhotoSwipeLightbox from "photoswipe/lightbox";
 
+	import { backGestureEventHandlers } from "$lib/back-gesture-event.svelte";
 	import ImageCarouselItem from "./ImageCarouselItem.svelte";
 
 	let {
@@ -39,6 +40,13 @@
 					}
 					return itemData;
 				});
+				const onBackGesture = () => {
+					lightbox?.pswp?.close();
+					return false;
+				};
+				lightbox.on("beforeOpen", () => {
+					backGestureEventHandlers.add(onBackGesture);
+				});
 				lightbox.on("openingAnimationStart", () => {
 					gallery?.querySelectorAll(".item").forEach((item) => {
 						if (item instanceof HTMLElement) {
@@ -46,14 +54,15 @@
 						}
 					});
 				});
-
 				lightbox.on("change", () => {
 					gallery?.scrollTo({
 						top: lightbox?.pswp?.currSlide?.data.element?.offsetTop ?? 0,
 						behavior: "instant",
 					});
 				});
-
+				lightbox.on("close", () => {
+					backGestureEventHandlers.delete(onBackGesture);
+				});
 				lightbox.on("destroy", () => {
 					gallery?.querySelectorAll(".item").forEach((item) => {
 						if (item instanceof HTMLElement) {

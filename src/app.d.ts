@@ -10,9 +10,13 @@ declare global {
 	}
 	interface Window {
 		__reapplyInsets: () => unknown;
-		__AndroidInsets:
-			| { top(): number; bottom(): number; left(): number; right(): number }
-			| undefined;
+		__AndroidInsets?: {
+			top(): number;
+			bottom(): number;
+			left(): number;
+			right(): number;
+		};
+		__AndroidOnBackGesture?: () => boolean;
 	}
 }
 

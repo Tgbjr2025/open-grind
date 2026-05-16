@@ -7,9 +7,15 @@
 	import { onMount } from "svelte";
 	import { Toaster } from "svelte-sonner";
 
-	import { applyAndroidInsets } from "$lib/utils";
+	import {
+		applyAndroidInsets,
+		applyBackGestureHandler,
+	} from "$lib/android-native-bridge";
 
-	onMount(() => applyAndroidInsets());
+	onMount(() => {
+		applyAndroidInsets();
+		applyBackGestureHandler();
+	});
 
 	import favicon from "$lib/assets/favicon.png";
 
