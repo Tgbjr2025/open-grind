@@ -220,7 +220,10 @@
 {:else}
 	<div class={[className, contentClass]} bind:this={media.el}>
 		<div
-			class="size-full flex justify-center items-center bg-card-foreground/10 rounded-lg"
+			class={[
+				"size-full flex justify-center items-center bg-card-foreground/10 rounded-xl",
+				media.cornerClass,
+			]}
 		>
 			<LockIcon weight="fill" size={36} color="var(--color-neutral-600)" />
 		</div>

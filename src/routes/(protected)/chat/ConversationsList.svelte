@@ -33,7 +33,7 @@
 
 <div
 	class={[
-		"flex flex-col gap-1 p-4 w-full h-full overflow-auto min-w-29.25",
+		"flex flex-col gap-1 p-4 pb-[calc(0.5rem+var(--content-pb))] w-full h-full overflow-auto min-w-29.25",
 		className,
 	]}
 >

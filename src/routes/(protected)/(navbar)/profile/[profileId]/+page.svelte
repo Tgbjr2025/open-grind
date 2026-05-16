@@ -37,7 +37,7 @@
 </script>
 
 <div class="flex">
-	<main class="pb-16 w-full max-w-200 m-auto relative">
+	<main class="w-full max-w-200 m-auto relative">
 		{#await profile}
 			<Skeleton />
 		{:then profile}

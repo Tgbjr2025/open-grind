@@ -1,13 +1,13 @@
 <script lang="ts">
+	import { page } from "$app/state";
+	import ChatCircleIcon from "phosphor-svelte/lib/ChatCircleIcon";
 	import DotsNineIcon from "phosphor-svelte/lib/DotsNineIcon";
 	import DropIcon from "phosphor-svelte/lib/DropIcon";
 	import FireIcon from "phosphor-svelte/lib/FireIcon";
-	import ChatCircleIcon from "phosphor-svelte/lib/ChatCircleIcon";
 
-	import { page } from "$app/state";
-	import { tabsListVariants } from "$lib/components/ui/tabs";
-	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
 	import { getMyProfile } from "$lib/api/profile";
+	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
+	import { tabsListVariants } from "$lib/components/ui/tabs";
 
 	const myProfilePhotos = $derived(
 		getMyProfile().then((profile) => profile.medias),
@@ -18,10 +18,7 @@
 	direction="bottomToTop"
 	tag="nav"
 	class={[
-		"fixed bottom-0 z-50 w-full py-2",
-		{
-			"max-xs:hidden": page.route.id === "/(protected)/chat/[conversationId]",
-		},
+		"fixed bottom-0 z-50 w-full pt-2 pb-[calc(0.5rem+var(--safe-area-bottom))]",
 	]}
 	bgClass="bg-linear-to-t from-background to-transparent"
 	contentClass="overflow-auto no-scrollbar left-1/2 -translate-x-1/2 m-auto flex justify-center gap-2 px-2"
@@ -32,7 +29,7 @@
 			"links shrink-0 [&>a>svg]:size-5!",
 		]}
 	>
-		<a href="/" data-active={page.route.id === "/(protected)/(root)"}>
+		<a href="/" data-active={page.route.id === "/(protected)/(navbar)/(root)"}>
 			<DotsNineIcon weight="fill" />
 			Browse
 		</a>
@@ -58,8 +55,9 @@
 			"size-14 flex shrink-0 rounded-full border p-1 bg-muted",
 			{
 				"border-accent border-2":
-					page.route.id === "/(protected)/settings/(me)",
-				"border-border": page.route.id !== "/(protected)/settings/(me)",
+					page.route.id === "/(protected)/(navbar)/settings/(me)",
+				"border-border":
+					page.route.id !== "/(protected)/(navbar)/settings/(me)",
 			},
 		]}
 	>

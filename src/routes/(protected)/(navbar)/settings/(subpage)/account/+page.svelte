@@ -6,7 +6,7 @@
 </script>
 
 <div class="flex w-full px-4">
-	<main class="pb-18 flex flex-col gap-3 w-full max-w-120 m-auto">
+	<main class="pb-(--content-pb) flex flex-col gap-3 w-full max-w-120 m-auto">
 		{#snippet item({ title }: { title: string })}
 			<Item.Root variant="outline">
 				{#snippet child({ props })}

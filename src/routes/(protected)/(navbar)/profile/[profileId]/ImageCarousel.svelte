@@ -160,7 +160,12 @@
 		}
 		.pswp .pswp__created-at-label {
 			text-shadow: 1px 1px 3px var(--pswp-icon-color-secondary);
-			@apply absolute bottom-0 left-1/2 -translate-x-1/2 text-white/90 font-medium w-full h-16 flex justify-center items-center bg-linear-to-t from-background/60 pt-4;
+			@apply absolute bottom-0 left-1/2 -translate-x-1/2 text-white/90 font-medium w-full flex justify-center items-center bg-linear-to-t from-background/60 pt-4;
+			height: calc(4rem + var(--safe-area-bottom));
+			padding-bottom: calc(0.5rem + var(--safe-area-bottom));
+		}
+		.pswp .pswp__top-bar {
+			margin-top: var(--safe-area-top);
 		}
 	}
 </style>

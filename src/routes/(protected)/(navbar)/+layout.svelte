@@ -4,5 +4,7 @@
 	let { children }: import("./$types").LayoutProps = $props();
 </script>
 
-{@render children?.()}
+<div class="flex min-h-dvh flex-col pt-(--safe-area-top) pb-(--content-pb)">
+	{@render children?.()}
+</div>
 <NavBar />

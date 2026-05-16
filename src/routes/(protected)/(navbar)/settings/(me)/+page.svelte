@@ -11,7 +11,7 @@
 </script>
 
 <div class="flex w-full p-4">
-	<main class="max-w-120 w-full flex flex-col m-auto gap-3 pb-16">
+	<main class="max-w-120 w-full flex flex-col m-auto gap-3">
 		<ProfileLink id={data.ourProfileId} />
 		<span role="separator"></span>
 		<AccountSettingsLink />

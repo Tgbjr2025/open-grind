@@ -19,9 +19,9 @@
 		<ArrowLeftIcon size={32} />
 	</a>
 	<span class="truncate min-w-0">
-		{#if page.route.id === "/(protected)/settings/(subpage)/account"}
+		{#if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account"}
 			Account Settings
-		{:else if page.route.id === "/(protected)/settings/(subpage)/app"}
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/app"}
 			App Settings
 		{/if}
 	</span>

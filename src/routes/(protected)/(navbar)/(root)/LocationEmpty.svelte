@@ -66,7 +66,7 @@
 	}
 </script>
 
-<Empty.Root>
+<Empty.Root class="max-md:p-6">
 	<Empty.Header>
 		<Empty.Media variant="icon">
 			<NavigationArrowIcon weight="fill" color="var(--primary)" />
@@ -77,7 +77,7 @@
 		</Empty.Description>
 	</Empty.Header>
 	<Empty.Content>
-		<div class="flex gap-2">
+		<div class="flex flex-wrap justify-center gap-2">
 			{#if geoApiSupported}
 				<Button variant="default" onclick={handleDetectLocation} {disabled}>
 					<GpsFixIcon color="currentColor" weight="fill" />

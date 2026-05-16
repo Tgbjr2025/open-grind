@@ -127,7 +127,7 @@
 		<!-- bottom-2 w-[calc(100%-8rem)]  -->
 	</div>
 	{#if showSearchResults}
-		<div class="size-full z-1000 top-0 left-0 absolute p-1 pb-16">
+		<div class="size-full z-1000 top-0 left-0 absolute p-1">
 			<div
 				class="bg-popover-foreground backdrop-blur-xl w-full h-full rounded-md flex flex-col text-popover shadow-md px-1 py-3 overflow-auto gap-2"
 			>
