@@ -17,14 +17,9 @@ function readEnvInset(prop: string): number {
 }
 
 export function applyAndroidInsets() {
-	if (!("__AndroidInsets" in window)) return;
-	const ai = window.__AndroidInsets as
-		| { top(): number; bottom(): number; left(): number; right(): number }
-		| undefined;
-
 	for (const side of ["top", "bottom", "left", "right"] as const) {
 		const cssInset = readEnvInset(`safe-area-inset-${side}`);
-		const nativeInset = ai?.[side]();
+		const nativeInset = window.__AndroidInsets?.[side]();
 		let value: string;
 		if (cssInset !== 0) value = `env(safe-area-inset-${side}, 0px)`;
 		else if (nativeInset !== undefined) value = `${nativeInset}px`;
