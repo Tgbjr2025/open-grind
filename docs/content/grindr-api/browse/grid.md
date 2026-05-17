@@ -64,7 +64,7 @@ Only for [v3/cascade](#get-cascade-legacy):
 - `isRoaming` — boolean
 - `isRightNow` — boolean
 - `hasUnreadThrob` — boolean
-- `isBlockable` — boolean
+- `isBlockable` — boolean, optional
 - `isBoostingSomewhereElse` — boolean
 
 Only for [v4/cascade](#get-cascade):

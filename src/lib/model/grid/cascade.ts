@@ -76,7 +76,7 @@ export const cascadeV3ResponseProfileSchema =
 		isRoaming: z.boolean(),
 		isRightNow: z.boolean(),
 		hasUnreadThrob: z.boolean(),
-		isBlockable: z.boolean(),
+		isBlockable: z.boolean().optional(),
 		isBoostingSomewhereElse: z.boolean(),
 	});
 
