@@ -6,19 +6,18 @@
 	import NavBar from "$lib/components/NavBar.svelte";
 	import * as Card from "$lib/components/ui/card";
 	import * as Resizable from "$lib/components/ui/resizable";
-	import { setConversations } from "./conversations-context.svelte";
-	import { ConversationsState } from "./conversations.svelte";
+	import {
+		getOrCreateConversationsState,
+		setConversations,
+	} from "./conversations-context.svelte";
 	import ConversationsList from "./ConversationsList.svelte";
 
 	let { data, children }: import("./$types").LayoutProps = $props();
 
-	const conversations = untrack(
-		() => new ConversationsState(data.ourProfileId),
+	const conversations = untrack(() =>
+		getOrCreateConversationsState(data.ourProfileId),
 	);
 	setConversations(conversations);
-	$effect(() => {
-		return () => void conversations.destroy();
-	});
 
 	let paneGroup: HTMLElement | null = $state(null);
 	let conversationsListCollapsedSizePercentage = $state(0);
@@ -42,7 +41,9 @@
 	const mobile = new MediaQuery("(width < 424px)");
 </script>
 
-<main class="flex w-full flex-1 h-dvh pt-(--safe-area-top) pb-(--safe-area-bottom)">
+<main
+	class="flex w-full flex-1 h-dvh pt-(--safe-area-top) pb-(--safe-area-bottom)"
+>
 	{#if !mobile.current}
 		<Resizable.PaneGroup
 			direction="horizontal"
@@ -67,7 +68,9 @@
 				defaultSize={57}
 				minSize={pageContentMinWidthPercentage * 100}
 			>
-				<div class="flex-1 self-stretch p-4 ps-1 pb-[calc(0.5rem+var(--content-pb))] h-full">
+				<div
+					class="flex-1 self-stretch p-4 ps-1 pb-[calc(0.5rem+var(--content-pb))] h-full"
+				>
 					<Card.Root
 						class={[
 							"h-full rounded-2xl p-0 gap-0 relative dark:ring-neutral-800",
