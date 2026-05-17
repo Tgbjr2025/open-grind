@@ -184,7 +184,7 @@
 							}
 							if (permissions.location === "granted") {
 								const pos = await getCurrentPosition();
-								map.setView([pos.coords.latitude, pos.coords.longitude], 13);
+								map.setView([pos.coords.latitude, pos.coords.longitude], 17);
 							} else {
 								toast.error(
 									"Location permission denied. Change this in your system settings to use this button.",
