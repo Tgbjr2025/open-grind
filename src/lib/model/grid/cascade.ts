@@ -61,6 +61,25 @@ export const cascadeResponseProfileSchema = z.object({
 	isPopular: z.boolean(),
 });
 
+export const cascadeV3ResponseFavHeaderV1Schema = z.object({
+	type: "favs_header_v1",
+	data: z.object({
+		"@type": z.literal("CascadeItemData$FavHeaderV1"),
+		available: z.number().int().nonnegative(),
+		displayed: z.number().int().nonnegative(),
+		total: z.number().int().nonnegative(),
+	}),
+});
+
+export const cascadeV4ResponseFavHeaderV1Schema = z.object({
+	type: "favs_header_v1",
+	data: z.object({
+		available: z.number().int().nonnegative(),
+		displayed: z.number().int().nonnegative(),
+		total: z.number().int().nonnegative(),
+	}),
+});
+
 export const cascadeV3ResponseProfileSchema =
 	cascadeResponseProfileSchema.extend({
 		lastOnline: unixTimestampMsSchema,
@@ -255,6 +274,7 @@ export const cascadeV3ResponseItemSchema = z.discriminatedUnion("type", [
 	cascadeV3ResponseBoostUpsellV1Schema,
 	cascadeV3ResponseUnlimitedMpuV1Schema,
 	cascadeV3ResponseXtraMpuV1Schema,
+	cascadeV3ResponseFavHeaderV1Schema,
 ]);
 
 export const cascadeV4ResponseItemSchema = z.discriminatedUnion("type", [
@@ -266,4 +286,5 @@ export const cascadeV4ResponseItemSchema = z.discriminatedUnion("type", [
 	cascadeV4ResponseBoostUpsellV1Schema,
 	cascadeV4ResponseUnlimitedMpuV1Schema,
 	cascadeV4ResponseXtraMpuV1Schema,
+	cascadeV4ResponseFavHeaderV1Schema,
 ]);
