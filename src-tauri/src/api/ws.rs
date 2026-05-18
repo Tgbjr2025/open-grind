@@ -77,7 +77,7 @@ async fn connect_and_run(app: &AppHandle) -> Result<(), AppError> {
         );
         headers.insert(
             "User-Agent",
-            HeaderValue::from_str(state.client()?.user_agent.as_str())
+            HeaderValue::from_str(&state.client()?.user_agent.read().await.clone())
                 .map_err(|e| AppError::Http(format!("Invalid user-agent: {e}")))?,
         );
     }

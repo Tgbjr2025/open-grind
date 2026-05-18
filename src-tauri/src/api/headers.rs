@@ -2,7 +2,7 @@ use rand;
 use reqwest::header::{HeaderMap, HeaderValue};
 
 const APP_VERSION: &str = "26.7.0.159416";
-const BUILD_NUMBER: &str = "147239";
+const BUILD_NUMBER: &str = "159416";
 const MAX_ANDROID_VERSION: u8 = 16;
 
 struct DeviceProfile {
@@ -426,24 +426,29 @@ pub fn build_default_headers(device: &DeviceInfo, user_agent: &str) -> HeaderMap
         device.screen_resolution,
         device.advertising_id
     );
-    headers.insert(
-        "L-Device-Info",
-        HeaderValue::from_str(&device_info).unwrap(),
-    );
+    headers.insert("Accept", HeaderValue::from_static("application/json"));
     headers.insert("User-Agent", HeaderValue::from_str(user_agent).unwrap());
-    headers.insert("requireRealDeviceInfo", HeaderValue::from_static("true"));
+    headers.insert("L-Locale", HeaderValue::from_str(device.locale).unwrap());
+    headers.insert(
+        "Accept-language",
+        HeaderValue::from_str(device.accept_language).unwrap(),
+    );
+    // Authorization?
     headers.insert(
         "L-Time-Zone",
         HeaderValue::from_str(device.timezone).unwrap(),
     );
-    headers.insert("L-Locale", HeaderValue::from_str(device.locale).unwrap());
     headers.insert(
-        "Accept-Language",
-        HeaderValue::from_str(device.accept_language).unwrap(),
+        "L-Device-Info",
+        HeaderValue::from_str(&device_info).unwrap(),
     );
-    headers.insert("Accept", HeaderValue::from_static("application/json"));
+    // headers.insert("requireRealDeviceInfo", HeaderValue::from_static("true"));
 
     headers
+}
+
+pub fn grindr_roles_header_value() -> HeaderValue {
+    HeaderValue::from_static("[FREE]")
 }
 
 #[cfg(test)]
@@ -482,7 +487,7 @@ mod tests {
             headers.get("User-Agent").unwrap(),
             expected_user_agent.as_str()
         );
-        assert_eq!(headers.get("requireRealDeviceInfo").unwrap(), "true");
+        assert!(headers.get("L-Grindr-Roles").is_none());
     }
 
     #[test]

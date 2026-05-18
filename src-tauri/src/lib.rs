@@ -45,6 +45,7 @@ pub fn run() {
             api::rest::request,
             api::ws::ws_connect,
             api::ws::ws_send,
+            api::client::rotate_api_params,
         ])
         .setup(|app| {
             #[cfg(all(target_os = "macos", not(feature = "keychain")))]

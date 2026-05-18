@@ -9,6 +9,7 @@ use crate::state::AppState;
 
 use super::client::GrindrClient;
 use super::client::BASE_URL;
+use super::headers::grindr_roles_header_value;
 
 #[derive(Serialize, Deserialize)]
 pub struct RawResponse {
@@ -28,7 +29,8 @@ impl GrindrClient {
         TReq: Serialize + ?Sized,
         TResp: DeserializeOwned,
     {
-        let mut request = self.http.request(method, format!("{BASE_URL}{path}"));
+        let http = self.http.read().await.clone();
+        let mut request = http.request(method, format!("{BASE_URL}{path}"));
 
         if let Some(body) = body {
             request = request.json(body);
@@ -62,10 +64,11 @@ impl GrindrClient {
             .await
             .ok_or_else(|| AppError::Auth("Not logged in".to_owned()))?;
 
-        let mut request = self
-            .http
+        let http = self.http.read().await.clone();
+        let mut request = http
             .request(method, format!("{BASE_URL}{path}"))
-            .header("Authorization", authorization);
+            .header("Authorization", authorization)
+            .header("L-Grindr-Roles", grindr_roles_header_value());
 
         if let Some(body) = body {
             let json_body: serde_json::Value = rmp_serde::from_slice(&body)
@@ -83,7 +86,8 @@ impl GrindrClient {
             println!("Method: {}", request.method());
             println!("URL:    {}", request.url());
             println!("Headers:");
-            for (name, value) in self.default_headers.iter().chain(request.headers()) {
+            let default_headers = self.default_headers.read().await;
+            for (name, value) in default_headers.iter().chain(request.headers()) {
                 println!("  {}: {}", name, value.to_str().unwrap_or("<binary>"));
             }
             if let Some(b) = request.body() {
@@ -97,7 +101,7 @@ impl GrindrClient {
             println!("========================");
         }
 
-        let response = self.http.execute(request).await?;
+        let response = http.execute(request).await?;
         let status = response.status().as_u16();
         let body = response.bytes().await?.to_vec();
 

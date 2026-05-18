@@ -14,7 +14,7 @@ Absense or incorrect forming of this header might lead to HTTP status 403 and Cl
 
 - `deviceId` — 16 hex characters
 - `GLOBAL` — hardcoded channel/flavor
-- `deviceType` — `1` if `Build.CPU_ABI == "x86"` (emulator), `2` otherwise (real device)
+- `deviceType` — `1` if `Build.CPU_ABI == "x86"` (emulator), `2` if ARM
 - `totalRam` — ActivityManager.MemoryInfo.totalMem
 - `screenResolution` — "heightPx x widthPx" e.g. `2400x1080`
 - `advertisingId` — Google Advertising ID, falls back to `00000000-0000-0000-0000-000000000000` if unavailable
@@ -34,10 +34,6 @@ grindr3/25.20.0.147239;147239;<subscriptionTier>;<os>;<deviceModel>;<manufacture
  
 Example: `grindr3/25.20.0.147239;147239;Free;Android 13;Pixel 7;Google`
 
-## `requireRealDeviceInfo`
-
-Send as-is in camelCase. Must be set to `true` for most endpoints.
-
 ## `L-Time-Zone`
 
 [Time zone](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) in format Country/Region. E.g. `America/New_York` or `Europe/Madrid`. Unknown whether this value is checked against your IP's ISP location.
@@ -50,3 +46,18 @@ Should be set along with `Accept-Language` to a language.
 - Format for L-Locale: `en_US`
 
 Note the hyphen/underscore.
+
+## `L-Grindr-Roles`
+
+Should be a square-bracketed set of uppercased subscription tiers separated by comma without spaces or quotes, e.g. `[FREE]`. Only when user is already authorized.
+
+## Correct headers order
+
+- `Authorization`
+- `L-Time-Zone`
+- `L-Grindr-Roles`
+- `L-Device-Info`
+- `Accept`
+- `User-Agent`
+- `L-Locale`
+- `Accept-language` — note the lowercase `l`
