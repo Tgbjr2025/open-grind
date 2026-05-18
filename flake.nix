@@ -91,6 +91,8 @@
             androidSdk
             pkgs.pkg-config
             pkgs.stdenv.cc
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isDarwin [
+            pkgs.libiconv
           ];
 
           buildEnv = {
