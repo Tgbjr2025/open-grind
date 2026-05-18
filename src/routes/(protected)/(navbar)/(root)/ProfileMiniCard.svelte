@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { env } from "$env/dynamic/public";
 	import { UserIcon } from "phosphor-svelte";
 
 	import { Badge } from "$lib/components/ui/badge";
@@ -28,7 +29,12 @@
 			<img
 				src="https://cdns.grindr.com/images/thumb/320x320/{profilePicture.mediaHash}"
 				alt="Profile avatar"
-				class="w-full h-full"
+				class={[
+					"w-full h-full",
+					{
+						"blur-2xl": env.PUBLIC_ENABLE_BLUR_EFFECTS,
+					},
+				]}
 				loading="lazy"
 				draggable="false"
 			/>
