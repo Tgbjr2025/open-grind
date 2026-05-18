@@ -61,7 +61,7 @@ export class ConversationState {
 		void this.#initialLoad();
 
 		this.#removeReconcileListener = conversations.onReconcile(() =>
-			this.#reconcileAfterGap(),
+			this.#reconcileMessages(),
 		);
 
 		this.#unlistenWs = ws.on(
@@ -108,29 +108,58 @@ export class ConversationState {
 		if (this.#readTimer !== null) clearTimeout(this.#readTimer);
 	}
 
-	async #reconcileAfterGap(): Promise<void> {
-		if (this.loading) return;
+	async #reconcileMessages(): Promise<void> {
+		if (this.loading || this.#destroyed) return;
 		try {
 			const result = await getConversation({
 				conversationId: this.conversationId,
 			});
-			const existingIds = new Set(
-				this.messages
-					.filter((m) => m.status === "sent")
-					.map((m) => m.messageId),
+			if (this.#destroyed) return;
+
+			const serverById = new Map(
+				result.messages.map((m) => [m.messageId, m] as const),
 			);
-			const fresh: OptimisticMessage[] = [];
-			for (const m of result.messages) {
-				if (existingIds.has(m.messageId)) continue;
-				fresh.push({ ...m, status: "sent" as const });
+			const oldestServerTs =
+				result.messages.length > 0
+					? result.messages[result.messages.length - 1].timestamp
+					: Number.POSITIVE_INFINITY;
+
+			const next: OptimisticMessage[] = [];
+			const seenLocalIds = new Set<string>();
+			let dropped = 0;
+			for (const local of this.messages) {
+				if (local.status !== "sent") {
+					next.push(local);
+					continue;
+				}
+				seenLocalIds.add(local.messageId);
+				if (
+					local.timestamp < oldestServerTs ||
+					serverById.has(local.messageId)
+				) {
+					next.push(local);
+				} else {
+					dropped++;
+				}
 			}
-			if (fresh.length === 0) {
+
+			const fresh: OptimisticMessage[] = [];
+			for (const sv of result.messages) {
+				if (seenLocalIds.has(sv.messageId)) continue;
+				const msg: OptimisticMessage = { ...sv, status: "sent" as const };
+				next.push(msg);
+				fresh.push(msg);
+			}
+
+			if (fresh.length === 0 && dropped === 0) {
 				this.#syncCache();
 				return;
 			}
-			this.messages = removeDuplicateMessages([...fresh, ...this.messages]);
+
+			this.messages = removeDuplicateMessages(next);
 			this.#updatePreview(this.messages.at(0));
 			this.#syncCache();
+
 			for (const m of fresh) {
 				if (m.senderId === this.ourProfileId) continue;
 				void this.reportRead({
@@ -139,7 +168,7 @@ export class ConversationState {
 				});
 			}
 		} catch (error) {
-			console.error("Failed to reconcile messages after gap", error);
+			console.error("Failed to reconcile messages", error);
 		}
 	}
 
@@ -156,6 +185,7 @@ export class ConversationState {
 			this.pageKey = cached.pageKey;
 			this.loading = false;
 			this.#conversations.markRead(this.conversationId);
+			void this.#reconcileMessages();
 			return;
 		}
 		this.loading = true;
