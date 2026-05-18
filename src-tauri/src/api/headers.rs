@@ -1,5 +1,9 @@
+use keyring_core::Entry;
 use rand;
 use reqwest::header::{HeaderMap, HeaderValue};
+use serde::{Deserialize, Serialize};
+
+use crate::error::AppError;
 
 const APP_VERSION: &str = "26.7.0.159416";
 const BUILD_NUMBER: &str = "159416";
@@ -366,18 +370,19 @@ pub const SAFE_TIMEZONES: &[(&str, &str, &str)] = &[
     ("Asia/Singapore", "en_SG", "en-SG"),
 ];
 
+#[derive(Clone, Serialize, Deserialize)]
 pub struct DeviceInfo {
     pub device_type: u8,
     pub device_id: String,
-    pub os: &'static str,
-    pub screen_resolution: &'static str,
-    pub total_ram: &'static str,
+    pub os: String,
+    pub screen_resolution: String,
+    pub total_ram: String,
     pub advertising_id: String,
-    pub device_model: &'static str,
-    pub manufacturer: &'static str,
-    pub timezone: &'static str,
-    pub locale: &'static str,
-    pub accept_language: &'static str,
+    pub device_model: String,
+    pub manufacturer: String,
+    pub timezone: String,
+    pub locale: String,
+    pub accept_language: String,
 }
 
 impl Default for DeviceInfo {
@@ -390,21 +395,47 @@ impl Default for DeviceInfo {
 
         let range = MAX_ANDROID_VERSION.saturating_sub(profile.min_android) + 1;
         let android_version = profile.min_android + rand::random::<u8>() % range;
-        let os = Box::leak(format!("Android {android_version}").into_boxed_str());
 
         Self {
             device_type: 2,
             device_id,
-            os,
-            screen_resolution: profile.screen_resolution,
-            total_ram: profile.total_ram,
+            os: format!("Android {android_version}"),
+            screen_resolution: profile.screen_resolution.to_owned(),
+            total_ram: profile.total_ram.to_owned(),
             advertising_id: uuid::Uuid::new_v4().to_string(),
-            device_model: profile.device_model,
-            manufacturer: profile.manufacturer,
-            timezone,
-            locale,
-            accept_language,
+            device_model: profile.device_model.to_owned(),
+            manufacturer: profile.manufacturer.to_owned(),
+            timezone: timezone.to_owned(),
+            locale: locale.to_owned(),
+            accept_language: accept_language.to_owned(),
         }
+    }
+}
+
+pub struct DeviceStorage;
+
+impl DeviceStorage {
+    fn entry() -> Result<Entry, AppError> {
+        Entry::new("open-grind", "device").map_err(|e| AppError::Auth(e.to_string()))
+    }
+
+    pub fn load() -> Result<Option<DeviceInfo>, AppError> {
+        let entry = Self::entry()?;
+        let bytes = match entry.get_secret() {
+            Ok(b) => b,
+            Err(keyring_core::Error::NoEntry) => return Ok(None),
+            Err(e) => return Err(AppError::Auth(e.to_string())),
+        };
+        rmp_serde::decode::from_slice(&bytes)
+            .map_err(|e| AppError::Auth(e.to_string()))
+            .map(Some)
+    }
+
+    pub fn save(device: &DeviceInfo) -> Result<(), AppError> {
+        let bytes = rmp_serde::encode::to_vec(device).map_err(|e| AppError::Auth(e.to_string()))?;
+        Self::entry()?
+            .set_secret(&bytes)
+            .map_err(|e| AppError::Auth(e.to_string()))
     }
 }
 
@@ -428,15 +459,15 @@ pub fn build_default_headers(device: &DeviceInfo, user_agent: &str) -> HeaderMap
     );
     headers.insert("Accept", HeaderValue::from_static("application/json"));
     headers.insert("User-Agent", HeaderValue::from_str(user_agent).unwrap());
-    headers.insert("L-Locale", HeaderValue::from_str(device.locale).unwrap());
+    headers.insert("L-Locale", HeaderValue::from_str(&device.locale).unwrap());
     headers.insert(
         "Accept-language",
-        HeaderValue::from_str(device.accept_language).unwrap(),
+        HeaderValue::from_str(&device.accept_language).unwrap(),
     );
     // Authorization?
     headers.insert(
         "L-Time-Zone",
-        HeaderValue::from_str(device.timezone).unwrap(),
+        HeaderValue::from_str(&device.timezone).unwrap(),
     );
     headers.insert(
         "L-Device-Info",
@@ -459,15 +490,15 @@ mod tests {
         DeviceInfo {
             device_type: 2,
             device_id: "device123".to_owned(),
-            os: "Android 14",
-            screen_resolution: "1080x2400",
-            total_ram: "8026152960",
+            os: "Android 14".to_owned(),
+            screen_resolution: "1080x2400".to_owned(),
+            total_ram: "8026152960".to_owned(),
             advertising_id: "ad-id-123".to_owned(),
-            device_model: "Pixel 8",
-            manufacturer: "Google",
-            timezone: "Europe/Madrid",
-            locale: "en_US",
-            accept_language: "en-US",
+            device_model: "Pixel 8".to_owned(),
+            manufacturer: "Google".to_owned(),
+            timezone: "Europe/Madrid".to_owned(),
+            locale: "en_US".to_owned(),
+            accept_language: "en-US".to_owned(),
         }
     }
 

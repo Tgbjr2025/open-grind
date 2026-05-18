@@ -7,7 +7,7 @@ use crate::error::AppError;
 use crate::state::AppState;
 
 use super::auth::Session;
-use super::headers::{build_default_headers, build_user_agent, DeviceInfo};
+use super::headers::{build_default_headers, build_user_agent, DeviceInfo, DeviceStorage};
 
 pub const BASE_URL: &str = "https://grindr.mobi";
 
@@ -29,7 +29,20 @@ pub struct RotateResult {
 
 impl GrindrClient {
     pub fn new() -> Result<Self, AppError> {
-        let device = DeviceInfo::default();
+        let device = match DeviceStorage::load() {
+            Ok(Some(d)) => d,
+            Ok(None) => {
+                let d = DeviceInfo::default();
+                if let Err(e) = DeviceStorage::save(&d) {
+                    eprintln!("[client] could not persist device info: {e}");
+                }
+                d
+            }
+            Err(e) => {
+                eprintln!("[client] could not load device info, regenerating: {e}");
+                DeviceInfo::default()
+            }
+        };
         let user_agent = build_user_agent(&device, "Free");
         let headers = build_default_headers(&device, &user_agent);
 
@@ -80,6 +93,9 @@ pub async fn rotate_api_params(
         .to_owned();
 
     let device = DeviceInfo::default();
+    if let Err(e) = DeviceStorage::save(&device) {
+        eprintln!("[client] could not persist rotated device info: {e}");
+    }
     let user_agent = build_user_agent(&device, "Free");
     let headers = build_default_headers(&device, &user_agent);
     let http = Client::builder().default_headers(headers.clone()).build()?;
