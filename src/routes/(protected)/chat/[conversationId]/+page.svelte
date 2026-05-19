@@ -59,5 +59,6 @@
 	<MessagesList {conversationState} />
 	<MessageComposer
 		onSend={(message: Message) => conversationState.send(message)}
+		recipientProfileId={conversationState.profile?.profileId ?? null}
 	/>
 </Card.Content>
