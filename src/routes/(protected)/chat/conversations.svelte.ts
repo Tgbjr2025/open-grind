@@ -46,7 +46,9 @@ class ConversationsState {
 
 	constructor(ourProfileId: number) {
 		this.ourProfileId = ourProfileId;
-		this.initial = this.#load(1);
+		this.initial = this.#load(1).catch((error: unknown) => {
+			console.error("Failed to load conversations:", error);
+		});
 
 		this.#wsPromises.push(
 			ws.onConnected(() => {

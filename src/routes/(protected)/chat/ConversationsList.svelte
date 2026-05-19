@@ -55,6 +55,16 @@
 		{#each Array(8)}
 			<Skeleton class="w-full h-24.5 shrink-0" />
 		{/each}
+	{:catch}
+		<Empty.Root>
+			<Empty.Header>
+				<Empty.Media variant="icon">
+					<ChatCircleSlashIcon weight="fill" />
+				</Empty.Media>
+				<Empty.Title>Couldn't Load Conversations</Empty.Title>
+				<Empty.Description>Check your connection and try again.</Empty.Description>
+			</Empty.Header>
+		</Empty.Root>
 	{:then}
 		{#each conversations.entries as conversation (conversation.data.conversationId)}
 			<Conversation {conversation} />

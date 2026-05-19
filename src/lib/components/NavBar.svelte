@@ -3,6 +3,7 @@
 	import ChatCircleIcon from "phosphor-svelte/lib/ChatCircleIcon";
 	import DotsNineIcon from "phosphor-svelte/lib/DotsNineIcon";
 	import DropIcon from "phosphor-svelte/lib/DropIcon";
+	import EyeIcon from "phosphor-svelte/lib/EyeIcon";
 	import FireIcon from "phosphor-svelte/lib/FireIcon";
 
 	import { getMyProfile } from "$lib/api/profile";
@@ -43,6 +44,10 @@
 		<a href="/interest" data-active={page.route.id === "/(protected)/(navbar)/interest"}>
 			<FireIcon weight="fill" />
 			Interest
+		</a>
+		<a href="/views" data-active={page.route.id === "/(protected)/(navbar)/views"}>
+			<EyeIcon weight="fill" />
+			Views
 		</a>
 		<a href="/chat" data-active={page.route.id === "/(protected)/chat"}>
 			<ChatCircleIcon weight="fill" />
