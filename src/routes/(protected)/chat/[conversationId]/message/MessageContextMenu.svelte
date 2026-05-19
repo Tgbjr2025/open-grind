@@ -6,19 +6,23 @@
 
 	import fireEmoji from "$lib/assets/emojis/fire-sm.avif";
 	import ContextMenu from "$lib/components/ContextMenu.svelte";
-	import ToastUnimplemented from "$lib/components/ToastUnimplemented.svelte";
 	import { Button } from "$lib/components/ui/button";
+	import ReportDialog from "./ReportDialog.svelte";
 
 	let {
 		textContent,
 		reactionAvailable,
+		reportProfileId,
 		onDelete,
 		...props
 	}: ComponentProps<typeof ContextMenu> & {
 		reactionAvailable?: boolean;
+		reportProfileId?: number;
 		textContent?: string;
 		onDelete?: () => void;
 	} = $props();
+
+	let reportOpen = $state(false);
 </script>
 
 <ContextMenu {...props}>
@@ -68,23 +72,24 @@
 				<TrashIcon />
 				Delete for me
 			</Button>
-			<Button
-				variant="ghost"
-				onclick={() => {
-					toast(ToastUnimplemented, {
-						componentProps: {
-							feature: "Report message",
-							issue: 41,
-						},
-					});
-					props.onClose();
-				}}
-			>
-				<FlagIcon /> Report
-			</Button>
+			{#if reportProfileId !== undefined}
+				<Button
+					variant="ghost"
+					onclick={() => {
+						props.onClose();
+						reportOpen = true;
+					}}
+				>
+					<FlagIcon /> Report
+				</Button>
+			{/if}
 		</div>
 	{/snippet}
 </ContextMenu>
+
+{#if reportProfileId !== undefined}
+	<ReportDialog bind:open={reportOpen} profileId={reportProfileId} />
+{/if}
 
 <style lang="postcss">
 	@reference "$layout";

@@ -15,14 +15,14 @@
 
 <div
 	class={[
-		"py-2 px-3 rounded-xl w-fit max-w-100 text-black shrink-0 relative overflow-visible select-text",
+		"py-2 px-3.5 rounded-2xl w-fit max-w-100 text-black shrink-0 relative overflow-visible select-text text-[15px] leading-[1.45]",
 		{
-			"bg-message-bubble-in": !isOut,
+			"bg-message-bubble-in shadow-sm": !isOut,
 			"ms-3": !isOut && !clone,
-			"rounded-es-none": lastInStack && !isOut,
-			"bg-message-bubble-out": isOut,
+			"rounded-bl-sm": lastInStack && !isOut,
+			"bg-message-bubble-out shadow-sm": isOut,
 			"me-3": isOut && !clone,
-			"rounded-ee-none": lastInStack && isOut,
+			"rounded-br-sm": lastInStack && isOut,
 		},
 	]}
 	bind:this={el}

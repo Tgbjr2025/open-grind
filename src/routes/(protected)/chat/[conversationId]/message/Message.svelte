@@ -249,6 +249,7 @@
 		style={inheritedStyles}
 		textContent={message.type === "Text" ? message.body.text : undefined}
 		reactionAvailable={message.reactions.length === 0 && !isOut}
+		reportProfileId={!isOut ? message.senderId : undefined}
 		{onDelete}
 	/>
 {/if}

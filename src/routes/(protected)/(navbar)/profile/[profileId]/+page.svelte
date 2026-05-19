@@ -39,7 +39,14 @@
 <div class="flex">
 	<main class="w-full max-w-200 m-auto relative">
 		{#await profile}
-			<Skeleton />
+			<div class="flex flex-col">
+				<Skeleton class="w-full aspect-3/4 max-h-[min(70vh,500px)] rounded-none" />
+				<div class="flex flex-col p-4 gap-3">
+					<Skeleton class="h-8 w-40 rounded-lg" />
+					<Skeleton class="h-4 w-28 rounded" />
+					<Skeleton class="h-4 w-36 rounded" />
+				</div>
+			</div>
 		{:then profile}
 			{@const {
 				displayName,
@@ -76,23 +83,23 @@
 				</nav>
 			{/if}
 			<div class="flex flex-col p-4 pb-12">
-				<h1 class="text-2xl wrap-break-word">
+				<h1 class="text-3xl wrap-break-word font-bold tracking-tight">
 					{#if displayName !== null}
-						<span class="font-semibold">
+						<span>
 							{displayName}
 						</span>{:else}<span
 							class="font-normal tracking-tight italic text-muted-foreground"
 						>
 							Someone
-						</span>{/if}{#if age !== null}, {age}
+						</span>{/if}{#if age !== null}<span class="font-normal text-foreground/70">, {age}</span>
 					{/if}
 				</h1>
-				<div class="flex items-center gap-3 text-sm mt-1">
+				<div class="flex items-center gap-3 text-sm mt-2 flex-wrap">
 					<OnlineStatus onlineUntil={onlineUntil ?? null} {seen} />
 					<Distance {distance} />
 				</div>
 				{#if sexualPosition !== null || height !== null || weight !== null || bodyType !== null}
-					<div class="flex items-center gap-3 text-sm mt-2">
+					<div class="flex items-center gap-3 text-sm mt-2 flex-wrap text-muted-foreground">
 						{#if sexualPosition !== null && sexualPosition !== undefined}
 							<SexualPosition {sexualPosition} />
 						{/if}
@@ -104,8 +111,8 @@
 					<AboutMe>{aboutMe}</AboutMe>
 				{/if}
 				{#if (genders && genders.length > 0) || (pronouns && pronouns.length > 0) || ethnicity !== null || relationshipStatus !== null || (grindrTribes && grindrTribes.length > 0)}
-					<div class="flex flex-col gap-2 mt-4">
-						<span class="uppercase text-sm text-muted-foreground">Stats</span>
+					<div class="flex flex-col gap-2 mt-6">
+						<span class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/70 px-0.5">Stats</span>
 						<Genders {genders} {pronouns} />
 						<Tribes tribes={grindrTribes} />
 						<Ethnicity {ethnicity} />
@@ -113,8 +120,8 @@
 					</div>
 				{/if}
 				{#if (lookingFor && lookingFor.length > 0) || (meetAt && meetAt.length > 0) || nsfw !== null}
-					<div class="flex flex-col gap-2 mt-4">
-						<span class="uppercase text-sm text-muted-foreground">
+					<div class="flex flex-col gap-2 mt-6">
+						<span class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/70 px-0.5">
 							Expectations
 						</span>
 						<LookingFor {lookingFor} />
@@ -123,16 +130,16 @@
 					</div>
 				{/if}
 				{#if hivStatus !== null || lastTestedDateValue !== null || (sexualHealthValue && sexualHealthValue.length > 0)}
-					<div class="flex flex-col gap-2 mt-4">
-						<span class="uppercase text-sm text-muted-foreground">Health</span>
+					<div class="flex flex-col gap-2 mt-6">
+						<span class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/70 px-0.5">Health</span>
 						<HivStatus {hivStatus} />
 						<LastTested lastTestedDate={lastTestedDateValue} />
 						<HealthPractices healthPractices={sexualHealthValue} />
 					</div>
 				{/if}
 				{#if socialNetworks && Object.keys(socialNetworks).length > 0}
-					<div class="flex flex-col gap-2 mt-4">
-						<span class="uppercase text-sm text-muted-foreground">Socials</span>
+					<div class="flex flex-col gap-2 mt-6">
+						<span class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/70 px-0.5">Socials</span>
 						<Socials socials={socialNetworks} />
 					</div>
 				{/if}

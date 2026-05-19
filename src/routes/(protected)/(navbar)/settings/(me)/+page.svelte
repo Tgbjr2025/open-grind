@@ -11,16 +11,23 @@
 </script>
 
 <div class="flex w-full p-4">
-	<main class="max-w-120 w-full flex flex-col m-auto gap-3">
-		<ProfileLink id={data.ourProfileId} />
-		<span role="separator"></span>
+	<main class="max-w-120 w-full flex flex-col m-auto gap-1.5">
+		<div class="mb-1">
+			<ProfileLink id={data.ourProfileId} />
+		</div>
+
+		<p class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/60 px-1 pt-2 pb-0.5">Preferences</p>
 		<AccountSettingsLink />
 		<AppSettingsLink />
+
+		<p class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/60 px-1 pt-4 pb-0.5">Account</p>
 		<SignOutButton />
-		<span role="separator"></span>
+
+		<p class="uppercase text-[11px] font-semibold tracking-widest text-muted-foreground/60 px-1 pt-4 pb-0.5">Community</p>
 		<Socials />
+
 		<span
-			class="font-mono text-xs text-muted-foreground break-all whitespace-pre-wrap py-2 px-4 select-text"
+			class="font-mono text-xs text-muted-foreground/50 break-all whitespace-pre-wrap py-2 px-4 select-text mt-2"
 		>
 			{version}
 		</span>

@@ -21,6 +21,16 @@
 	<span class="truncate min-w-0">
 		{#if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account"}
 			Account Settings
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account/email"}
+			Email
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account/password"}
+			Change Password
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account/blocked"}
+			Blocked Users
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account/hidden"}
+			Hidden Users
+		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/account/delete"}
+			Delete Account
 		{:else if page.route.id === "/(protected)/(navbar)/settings/(subpage)/app"}
 			App Settings
 		{/if}

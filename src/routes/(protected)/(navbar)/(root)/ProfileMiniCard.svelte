@@ -23,14 +23,14 @@
 	const profilePicture = $derived(medias?.[0]);
 </script>
 
-<a href="/profile/{id}" class="aspect-square relative flex items-end">
-	<div class="absolute w-full h-full bg-stone-700">
+<a href="/profile/{id}" class="aspect-square relative flex items-end overflow-hidden group">
+	<div class="absolute w-full h-full bg-muted">
 		{#if medias && profilePicture}
 			<img
 				src="https://cdns.grindr.com/images/thumb/320x320/{profilePicture.mediaHash}"
 				alt="Profile avatar"
 				class={[
-					"w-full h-full",
+					"w-full h-full object-cover transition-transform duration-300 group-hover:scale-105",
 					{
 						"blur-2xl": env.PUBLIC_ENABLE_BLUR_EFFECTS,
 					},
@@ -53,11 +53,15 @@
 			{(distance / 1000).toFixed(1)} km
 		</span>
 	{/if}
-	<div class="w-full z-1 flex p-0.5 gap-0.5">
+	<!-- Bottom gradient for text legibility -->
+	{#if displayName !== null || age !== null || (unread !== null && unread > 0)}
+		<div class="absolute bottom-0 left-0 right-0 h-14 bg-gradient-to-t from-black/70 to-transparent pointer-events-none z-0"></div>
+	{/if}
+	<div class="w-full z-1 flex p-1 gap-0.5">
 		{#if displayName !== null || age !== null}
 			<Badge
 				variant="outline"
-				class="gap-0 max-w-full bg-popover/20 backdrop-blur-2xl min-w-0 shrink"
+				class="gap-0 max-w-full bg-black/30 backdrop-blur-sm border-white/10 text-white min-w-0 shrink text-[11px] h-auto py-0.5"
 			>
 				{#if displayName !== null}
 					<span class="truncate block shrink font-semibold">
@@ -76,7 +80,7 @@
 		{/if}
 		{#if unread !== null && unread > 0}
 			<span
-				class="size-5 bg-primary inline-block rounded-full border border-black/20 shrink-0"
+				class="size-5 bg-primary inline-flex items-center justify-center text-[10px] font-bold rounded-full border border-black/20 shrink-0 text-primary-foreground"
 			>
 				{unread}
 			</span>

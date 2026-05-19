@@ -44,12 +44,12 @@
 	}
 </script>
 
-<div class="relative mx-2 shrink-0 min-w-0 flex items-end gap-0">
+<div class="relative mx-2 mb-1 shrink-0 min-w-0 flex items-end gap-0 bg-card/80 backdrop-blur-sm rounded-[24px] border border-border/60 px-1 py-1 shadow-sm">
 	<Button
 		type="button"
 		variant="ghost"
 		size="icon"
-		class="size-9.5 shrink-0 cursor-pointer p-2 mb-0"
+		class="size-9.5 shrink-0 cursor-pointer p-2 mb-0 rounded-full"
 		onclick={() => {
 			if (recipientProfileId === null) return;
 			albumPickerOpen = true;
@@ -71,7 +71,7 @@
 	>
 		<Textarea
 			placeholder="Say something..."
-			class="min-h-9.5 rounded-[20px] shrink-0 max-h-31.5 py-2 pr-9.5 h-fit! leading-5 placeholder-shown:truncate"
+			class="min-h-9.5 rounded-[20px] bg-transparent border-0 shadow-none focus-visible:ring-0 shrink-0 max-h-31.5 py-2 pr-9.5 h-fit! leading-5 placeholder-shown:truncate"
 			onkeydown={(
 				event: KeyboardEvent & {
 					currentTarget: EventTarget & HTMLTextAreaElement;

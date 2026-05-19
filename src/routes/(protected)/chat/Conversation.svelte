@@ -57,15 +57,19 @@
 				"truncate inline min-w-0 w-auto",
 				{
 					"text-muted-foreground": !conversation.data.name,
+					"font-semibold": conversation.data.unreadCount > 0,
 				},
 			]}
 		>
 			<DisplayName name={conversation.data.name} />
 		</Item.Title>
 		<Item.Description
-			class={{
-				"font-medium text-white": conversation.data.unreadCount > 0,
-			}}
+			class={[
+				"truncate",
+				{
+					"font-medium text-foreground/80": conversation.data.unreadCount > 0,
+				},
+			]}
 		>
 			{#if preview.text !== null}
 				{preview.text}
@@ -80,16 +84,19 @@
 			{/if}
 		</Item.Description>
 	</Item.Content>
-	<Item.Actions class="flex flex-col items-end gap-1 min-w-0">
+	<Item.Actions class="flex flex-col items-end gap-1.5 min-w-0">
 		<span
-			class="text-muted-foreground font-medium text-right truncate max-w-full"
+			class={[
+				"font-medium text-right truncate max-w-full text-xs",
+				conversation.data.unreadCount > 0 ? "text-accent" : "text-muted-foreground",
+			]}
 		>
 			<ConversationRelativeTimeDynamic
 				date={conversation.data.lastActivityTimestamp}
 			/>
 		</span>
 		{#if conversation.data.unreadCount > 0}
-			<Badge class="px-[5.5px] @max-[9rem]:hidden">
+			<Badge class="px-[5.5px] min-w-[20px] h-5 flex items-center justify-center text-[11px] font-bold @max-[9rem]:hidden">
 				{conversation.data.unreadCount}
 			</Badge>
 		{/if}

@@ -76,11 +76,11 @@
 </script>
 
 <div
-	class="grid grid-cols-2 xxs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 w-full gap-0.5 px-1 flex-1"
+	class="grid grid-cols-2 xxs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 w-full gap-0.5 px-1 pb-2 flex-1"
 >
 	{#if gridState.loading}
 		{#each Array.from({ length: 20 })}
-			<div class="aspect-square bg-stone-700 animate-pulse"></div>
+			<div class="aspect-square bg-muted animate-pulse rounded-sm"></div>
 		{/each}
 	{:else if gridState.errorMessage}
 		<div class="p-4 flex col-span-full">
@@ -104,14 +104,14 @@
 				/>
 			{:else}
 				<div
-					class="aspect-square bg-stone-700 animate-pulse"
+					class="aspect-square bg-muted animate-pulse rounded-sm"
 					use:observePartial={{ batchIndex: item.batchIndex }}
 				></div>
 			{/if}
 		{/each}
 		{#if gridState.loadingMore}
 			{#each Array.from({ length: 20 })}
-				<div class="aspect-square bg-stone-700 animate-pulse"></div>
+				<div class="aspect-square bg-muted animate-pulse rounded-sm"></div>
 			{/each}
 		{/if}
 		{#if gridState.nextPage !== 0 && gridState.nextPage !== null}

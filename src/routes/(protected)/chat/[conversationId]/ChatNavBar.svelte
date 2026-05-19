@@ -19,24 +19,24 @@
 	contentClass="flex items-center h-full"
 	tag="nav"
 >
-	<a href="/chat" class="flex items-center justify-center w-19 h-full">
-		<ArrowLeftIcon size={32} />
+	<a href="/chat" class="flex items-center justify-center w-19 h-full text-foreground/80 hover:text-foreground transition-colors">
+		<ArrowLeftIcon size={28} />
 	</a>
 	{#if conversationState.loading || conversationState.profile === null}
 		<div class="py-4 ps-0 flex-1 flex items-center gap-3">
-			<Skeleton class="rounded-full size-[37.5px]" />
+			<Skeleton class="rounded-full size-10" />
 			<div class="flex flex-col gap-2">
-				<Skeleton class="rounded-md w-20 h-4" />
-				<Skeleton class="rounded-md w-12 h-3" />
+				<Skeleton class="rounded-md w-24 h-4" />
+				<Skeleton class="rounded-md w-14 h-3" />
 			</div>
 		</div>
 	{:else if conversationState.error}
-		<span class="flex-1">Failed to load conversation</span>
+		<span class="flex-1 text-sm text-muted-foreground">Failed to load conversation</span>
 	{:else}
 		{@const profile = conversationState.profile}
-		<a href="/profile/{profile.profileId}" class="flex-1 ps-0 py-4 pe-4">
-			<Card.Header class="flex items-center gap-4 px-0">
-				<Avatar.Root class="size-[37.5px] after:rounded-full">
+		<a href="/profile/{profile.profileId}" class="flex-1 ps-0 py-3 pe-4">
+			<Card.Header class="flex items-center gap-3 px-0">
+				<Avatar.Root class="size-10 after:rounded-full shrink-0">
 					{#if profile.mediaHash}
 						<Avatar.Image
 							src="https://cdns.grindr.com/images/thumb/75x75/{profile.mediaHash}"
@@ -55,7 +55,7 @@
 				<div class="flex flex-col min-w-0">
 					<Card.Title
 						class={[
-							"min-w-0 truncate",
+							"min-w-0 truncate text-base font-semibold",
 							{
 								"text-muted-foreground": !profile.name,
 							},
@@ -64,15 +64,15 @@
 						<DisplayName name={profile.name} />
 					</Card.Title>
 					{#if profile.distance === null}
-						<Card.Description class="truncate">
+						<Card.Description class="truncate text-xs">
 							Distance unknown
 						</Card.Description>
 					{:else}
-						<Card.Description class="truncate">
+						<Card.Description class="truncate text-xs">
 							{#if profile.distance < 1000}
-								{Math.round(profile.distance)} m
+								{Math.round(profile.distance)} m away
 							{:else}
-								{(profile.distance / 1000).toFixed(1)} km
+								{(profile.distance / 1000).toFixed(1)} km away
 							{/if}
 						</Card.Description>
 					{/if}

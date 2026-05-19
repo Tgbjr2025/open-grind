@@ -93,7 +93,7 @@
 		{#each Array(10)}
 			<Skeleton
 				class={[
-					"h-9 shrink-0 max-w-full",
+					"h-10 shrink-0 max-w-full rounded-2xl",
 					Math.random() < 0.5 ? "self-start" : "self-end",
 				]}
 				style="width: {Math.floor(Math.random() * 400) + 100}px"
