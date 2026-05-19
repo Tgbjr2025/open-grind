@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeftIcon, UserIcon } from "phosphor-svelte";
+	import { ArrowLeftIcon, ArrowsClockwiseIcon, UserIcon } from "phosphor-svelte";
 
 	import DisplayName from "$lib/components/DisplayName.svelte";
 	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
@@ -10,6 +10,18 @@
 
 	let { conversationState }: { conversationState: ConversationState } =
 		$props();
+
+	let refreshing = $state(false);
+
+	async function handleRefresh() {
+		if (refreshing) return;
+		refreshing = true;
+		try {
+			await conversationState.refresh();
+		} finally {
+			refreshing = false;
+		}
+	}
 </script>
 
 <ProgressiveBlur
@@ -63,7 +75,11 @@
 					>
 						<DisplayName name={profile.name} />
 					</Card.Title>
-					{#if profile.distance === null}
+					{#if conversationState.wsStatus === "disconnected"}
+						<Card.Description class="truncate text-xs text-amber-500">
+							Offline — polling for messages
+						</Card.Description>
+					{:else if profile.distance === null}
 						<Card.Description class="truncate text-xs">
 							Distance unknown
 						</Card.Description>
@@ -79,5 +95,15 @@
 				</div>
 			</Card.Header>
 		</a>
+	{/if}
+	{#if conversationState.wsStatus === "disconnected"}
+		<button
+			onclick={handleRefresh}
+			disabled={refreshing}
+			aria-label="Refresh messages"
+			class="flex items-center justify-center w-12 h-full text-amber-500 hover:text-amber-400 transition-colors disabled:opacity-50"
+		>
+			<ArrowsClockwiseIcon size={22} class={refreshing ? "animate-spin" : ""} />
+		</button>
 	{/if}
 </ProgressiveBlur>

@@ -16,6 +16,8 @@ import type {
 import type { ConversationsState } from "../conversations.svelte";
 import { getConversation } from "./messages";
 
+const POLL_INTERVAL_MS = 10_000;
+
 export type OptimisticMessage = ApiResponseMessage & {
 	status: "sent" | "pending" | "error";
 };
@@ -31,13 +33,20 @@ export class ConversationState {
 	error: Error | null = $state(null);
 	lastReadTimestamp: number | null = $state(null);
 
+	get wsStatus() {
+		return ws.status;
+	}
+
 	readonly conversationId: string;
 	readonly ourProfileId: number;
 
 	#conversations: ConversationsState;
 	#readQueue: { messageId: string; timestamp: number }[] = [];
 	#readTimer: ReturnType<typeof setTimeout> | null = null;
+	#pollTimer: ReturnType<typeof setInterval> | null = null;
 	#removeReconcileListener: () => void;
+	#removeWsConnectedListener: (() => void) | null = null;
+	#removeWsDisconnectedListener: (() => void) | null = null;
 
 	constructor({
 		conversationId,
@@ -63,6 +72,33 @@ export class ConversationState {
 		this.#removeReconcileListener = conversations.onReconcile(() =>
 			this.#reconcileMessages(),
 		);
+
+		// Start polling immediately if already disconnected when this state is created.
+		if (ws.status === "disconnected") {
+			this.#startPolling();
+		}
+
+		// Listen for WS connect / disconnect to toggle polling.
+		ws.onConnected(() => {
+			if (this.#destroyed) return;
+			this.#stopPolling();
+		})
+			.then((unlisten) => {
+				this.#removeWsConnectedListener = unlisten;
+			})
+			.catch(console.error);
+
+		import("@tauri-apps/api/event")
+			.then(({ listen }) =>
+				listen<void>("ws:disconnected", () => {
+					if (this.#destroyed) return;
+					this.#startPolling();
+				}),
+			)
+			.then((unlisten) => {
+				this.#removeWsDisconnectedListener = unlisten;
+			})
+			.catch(console.error);
 
 		this.#unlistenWs = ws.on(
 			"chat.v1.message_sent",
@@ -107,6 +143,29 @@ export class ConversationState {
 		this.#unlistenWs.then((unlisten) => unlisten()).catch(console.error);
 		this.#removeReconcileListener();
 		if (this.#readTimer !== null) clearTimeout(this.#readTimer);
+		this.#stopPolling();
+		if (this.#removeWsConnectedListener) this.#removeWsConnectedListener();
+		if (this.#removeWsDisconnectedListener)
+			this.#removeWsDisconnectedListener();
+	}
+
+	#startPolling(): void {
+		if (this.#pollTimer !== null) return; // already polling
+		this.#pollTimer = setInterval(() => {
+			void this.#reconcileMessages();
+		}, POLL_INTERVAL_MS);
+	}
+
+	#stopPolling(): void {
+		if (this.#pollTimer !== null) {
+			clearInterval(this.#pollTimer);
+			this.#pollTimer = null;
+		}
+	}
+
+	/** Immediately fetch the latest messages. Useful for a manual refresh button. */
+	async refresh(): Promise<void> {
+		await this.#reconcileMessages();
 	}
 
 	async #reconcileMessages(): Promise<void> {
