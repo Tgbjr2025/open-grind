@@ -1,0 +1,105 @@
+<script lang="ts">
+	import { formatDistanceToNowStrict } from "date-fns";
+	import { EyeIcon, UserIcon } from "phosphor-svelte";
+	import z from "zod";
+
+	import { fetchRest } from "$lib/api";
+	import { Badge } from "$lib/components/ui/badge";
+	import * as Empty from "$lib/components/ui/empty";
+	import { Spinner } from "$lib/components/ui/spinner";
+
+	const viewSchema = z
+		.object({
+			profileId: z.number(),
+			displayName: z.string().nullable(),
+			profileImageMediaHash: z.string().nullable(),
+			seen: z.boolean(),
+			distance: z.number().nullable(),
+			lastOnline: z.number().nullable(),
+		})
+		.passthrough();
+
+	const responseSchema = z
+		.object({
+			views: z.array(viewSchema),
+		})
+		.passthrough();
+
+	const views = fetchRest("/v7/views/list").then((res) => res.jsonParsed(responseSchema));
+</script>
+
+<div class="px-4 flex-1 flex flex-col">
+	{#await views}
+		<div class="flex flex-1 items-center justify-center">
+			<Spinner class="size-6" />
+		</div>
+	{:then { views: viewList }}
+		{#if viewList.length === 0}
+			<Empty.Root>
+				<Empty.Header>
+					<Empty.Media variant="icon">
+						<EyeIcon weight="fill" />
+					</Empty.Media>
+					<Empty.Title>No views yet</Empty.Title>
+					<Empty.Description>
+						When someone views your profile, they'll appear here.
+					</Empty.Description>
+				</Empty.Header>
+			</Empty.Root>
+		{:else}
+			<ul class="flex flex-col py-2">
+				{#each viewList as view (view.profileId)}
+					<li>
+						<a
+							href="/profile/{view.profileId}"
+							class="flex items-center gap-3 hover:bg-muted/60 active:bg-muted transition-colors rounded-2xl px-3 py-2.5"
+						>
+							<div
+								class="size-14 rounded-2xl bg-muted shrink-0 overflow-hidden flex items-center justify-center"
+							>
+								{#if view.profileImageMediaHash}
+									<img
+										src="https://cdns.grindr.com/images/thumb/320x320/{view.profileImageMediaHash}"
+										alt="{view.displayName ?? 'Anonymous'}'s profile"
+										class="w-full h-full object-cover"
+										loading="lazy"
+										draggable="false"
+									/>
+								{:else}
+									<UserIcon
+										weight="fill"
+										color="var(--color-stone-400)"
+										class="size-8"
+									/>
+								{/if}
+							</div>
+							<div class="flex flex-col gap-1 min-w-0 flex-1">
+								<div class="flex items-center gap-2">
+									<span class="font-semibold truncate">
+										{view.displayName ?? "Anonymous"}
+									</span>
+									{#if view.seen}
+										<Badge variant="outline">Seen</Badge>
+									{/if}
+								</div>
+								{#if view.lastOnline !== null}
+									<span class="text-sm text-muted-foreground">
+										Online {formatDistanceToNowStrict(view.lastOnline, {
+											addSuffix: true,
+										})}
+									</span>
+								{/if}
+							</div>
+						</a>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	{:catch error}
+		<div class="flex flex-1 items-center justify-center">
+			<p class="text-destructive text-sm font-medium">
+				{error instanceof Error ? error.message : "Failed to load views."}
+			</p>
+		</div>
+	{/await}
+</div>
