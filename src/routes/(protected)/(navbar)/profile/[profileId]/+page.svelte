@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import { ChatCircleIcon } from "phosphor-svelte";
+	import { ChatCircleIcon, HeartIcon, HeartStraightIcon } from "phosphor-svelte";
+	import { toast } from "svelte-sonner";
 
+	import { fetchRest } from "$lib/api";
 	import { getProfile } from "$lib/api/profile";
 	import Button from "$lib/components/ui/button/button.svelte";
 	import { Skeleton } from "$lib/components/ui/skeleton";
@@ -34,6 +36,22 @@
 	);
 
 	const profile = $derived(getProfile(profileId));
+
+	let favoriteOverride = $state<boolean | null>(null);
+
+	async function toggleFavorite(current: boolean) {
+		const next = !current;
+		favoriteOverride = next;
+		try {
+			await fetchRest(`/v1/favorites/${profileId}`, {
+				method: next ? "POST" : "DELETE",
+			});
+		} catch (err) {
+			favoriteOverride = current;
+			console.error("Failed to update favorite", err);
+			toast.error("Failed to update favorite. Please try again.");
+		}
+	}
 </script>
 
 <div class="flex">
@@ -73,10 +91,25 @@
 				sexualHealth: sexualHealthValue,
 				socialNetworks,
 				medias,
+				isFavorite: profileIsFavorite,
 			} = profile}
+			{@const isFavorite = favoriteOverride ?? profileIsFavorite}
 			<ImageCarousel {medias} />
 			{#if !isOurProfile}
-				<nav class="absolute -translate-y-1/2 right-2">
+				<nav class="absolute -translate-y-1/2 right-2 flex items-center gap-2">
+					<Button
+						size="icon-lg"
+						class="size-14"
+						variant="outline"
+						onclick={() => toggleFavorite(isFavorite).catch((e) => console.error(e))}
+						aria-label={isFavorite ? "Unfavorite" : "Favorite"}
+					>
+						{#if isFavorite}
+							<HeartIcon weight="fill" class="size-8 text-red-500" />
+						{:else}
+							<HeartStraightIcon class="size-8" />
+						{/if}
+					</Button>
 					<Button size="icon-lg" class="size-14" href="/chat/{conversationId}">
 						<ChatCircleIcon weight="fill" class="size-8" />
 					</Button>
