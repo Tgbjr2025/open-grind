@@ -25,7 +25,7 @@ const grindrApiVersion = fs
 		),
 		"utf-8",
 	)
-	.match(/const APP_VERSION: &str = "([^"]+)";/)[1];
+	.match(/const APP_VERSION: &str = "([^"]+)";/)?.[1] ?? "";
 const grindrApiBuildNumber = fs
 	.readFileSync(
 		path.join(
@@ -34,7 +34,7 @@ const grindrApiBuildNumber = fs
 		),
 		"utf-8",
 	)
-	.match(/const BUILD_NUMBER: &str = "([^"]+)";/)[1];
+	.match(/const BUILD_NUMBER: &str = "([^"]+)";/)?.[1] ?? "";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {

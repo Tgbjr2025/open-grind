@@ -62,11 +62,12 @@ class WsState {
 		return listen<void>("ws:connected", () => handler());
 	}
 
-	send(type: string, payload: unknown): void {
+	send(type: string, payload: unknown): Promise<void> {
 		const ref_id = crypto.randomUUID();
-		invoke("ws_send", { command: { type, ref_id, payload } }).catch(
+		return invoke<void>("ws_send", { command: { type, ref_id, payload } }).catch(
 			(e: unknown) => {
 				console.error("[ws] send failed", type, e);
+				throw e;
 			},
 		);
 	}

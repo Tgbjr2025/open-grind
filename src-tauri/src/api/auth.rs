@@ -91,6 +91,8 @@ impl RefreshRequest {
 }
 
 fn decode_session_jwt(token: &str) -> Result<JwtClaims, AppError> {
+    // Signature verification is intentionally skipped — we only read the expiry
+    // claim for local session management; the token is never re-transmitted.
     let data = jsonwebtoken::dangerous::insecure_decode::<JwtClaims>(token)
         .map_err(|e| AppError::Auth(format!("JWT decode failed: {e}")))?;
 
