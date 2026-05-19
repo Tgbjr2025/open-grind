@@ -25,7 +25,7 @@ export const fullConversationSchema = z.object({
 			albumId: z.number().nullable(),
 			imageHash: mediaHashPublicSchema.nullable(),
 			// lat, lon, duration, photoContentReply
-		}),
+		}).nullable(),
 		muted: z.boolean(),
 		pinned: z.boolean(),
 		favorite: z.boolean(),

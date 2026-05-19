@@ -71,7 +71,11 @@
 				},
 			]}
 		>
-			{#if preview.text !== null}
+			{#if preview === null}
+				<span class="font-normal tracking-tight italic text-muted-foreground">
+					No messages yet
+				</span>
+			{:else if preview.text !== null}
 				{preview.text}
 			{:else if preview.albumId !== null}
 				Album
