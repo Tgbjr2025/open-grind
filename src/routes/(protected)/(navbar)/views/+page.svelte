@@ -4,24 +4,24 @@
 	import z from "zod";
 
 	import { fetchRest } from "$lib/api";
-	import { Badge } from "$lib/components/ui/badge";
 	import * as Empty from "$lib/components/ui/empty";
 	import { Spinner } from "$lib/components/ui/spinner";
 
 	const viewSchema = z
 		.object({
-			profileId: z.number(),
+			profileId: z.coerce.number(),
 			displayName: z.string().nullable(),
 			profileImageMediaHash: z.string().nullable(),
-			seen: z.boolean(),
+			seen: z.number().nullable(),
+			onlineUntil: z.number().nullable(),
 			distance: z.number().nullable(),
-			lastOnline: z.number().nullable(),
 		})
 		.passthrough();
 
 	const responseSchema = z
 		.object({
-			views: z.array(viewSchema),
+			totalViewers: z.number(),
+			profiles: z.array(viewSchema),
 		})
 		.passthrough();
 
@@ -33,8 +33,8 @@
 		<div class="flex flex-1 items-center justify-center">
 			<Spinner class="size-6" />
 		</div>
-	{:then { views: viewList }}
-		{#if viewList.length === 0}
+	{:then { profiles, totalViewers }}
+		{#if profiles.length === 0}
 			<Empty.Root>
 				<Empty.Header>
 					<Empty.Media variant="icon">
@@ -47,8 +47,9 @@
 				</Empty.Header>
 			</Empty.Root>
 		{:else}
+			<p class="text-xs text-muted-foreground px-3 pt-3 pb-1">{totalViewers} viewers</p>
 			<ul class="flex flex-col py-2">
-				{#each viewList as view (view.profileId)}
+				{#each profiles as view (view.profileId)}
 					<li>
 						<a
 							href="/profile/{view.profileId}"
@@ -74,19 +75,19 @@
 								{/if}
 							</div>
 							<div class="flex flex-col gap-1 min-w-0 flex-1">
-								<div class="flex items-center gap-2">
-									<span class="font-semibold truncate">
-										{view.displayName ?? "Anonymous"}
-									</span>
-									{#if view.seen}
-										<Badge variant="outline">Seen</Badge>
-									{/if}
-								</div>
-								{#if view.lastOnline !== null}
+								<span class="font-semibold truncate">
+									{view.displayName ?? "Anonymous"}
+								</span>
+								{#if view.seen !== null}
 									<span class="text-sm text-muted-foreground">
-										Online {formatDistanceToNowStrict(view.lastOnline, {
-											addSuffix: true,
-										})}
+										Viewed {formatDistanceToNowStrict(view.seen, { addSuffix: true })}
+									</span>
+								{/if}
+								{#if view.distance !== null}
+									<span class="text-xs text-muted-foreground/70">
+										{view.distance < 1000
+											? `${Math.round(view.distance)} m away`
+											: `${(view.distance / 1000).toFixed(1)} km away`}
 									</span>
 								{/if}
 							</div>
