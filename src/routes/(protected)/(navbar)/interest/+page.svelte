@@ -3,6 +3,8 @@
 	import z from "zod";
 
 	import { fetchRest } from "$lib/api";
+	import { getDistanceUnit } from "$lib/app-data/distance-unit.svelte";
+	import { formatDistance } from "$lib/utils/distance";
 	import * as Empty from "$lib/components/ui/empty";
 	import { Spinner } from "$lib/components/ui/spinner";
 
@@ -85,9 +87,7 @@
 								</div>
 								{#if tap.distance !== null}
 									<span class="text-xs text-muted-foreground/70">
-										{tap.distance < 1000
-											? `${Math.round(tap.distance)} m away`
-											: `${(tap.distance / 1000).toFixed(1)} km away`}
+										{formatDistance(tap.distance, getDistanceUnit())} away
 									</span>
 								{/if}
 							</div>

@@ -4,6 +4,7 @@ import {
 	getConversations,
 	markConversationAsRead,
 } from "$lib/api/conversation";
+import { setTotalUnread } from "$lib/stores/unread.svelte";
 import { previewFromMessage } from "$lib/model/message";
 import {
 	chatV1ConversationDeleteEventSchema,
@@ -68,6 +69,7 @@ class ConversationsState {
 						message.conversationId === this.#activeConversationId;
 					if (!isActive && message.senderId !== this.ourProfileId) {
 						entry.data.unreadCount += 1;
+						this.#syncUnread();
 					}
 					if (!isActive) {
 						this.invalidateConversation(message.conversationId);
@@ -159,6 +161,8 @@ class ConversationsState {
 			console.error("Failed to reconcile conversation list", error);
 		}
 
+		this.#syncUnread();
+
 		for (const handler of [...this.#reconcileListeners]) {
 			try {
 				await handler();
@@ -168,10 +172,19 @@ class ConversationsState {
 		}
 	}
 
+	#syncUnread(): void {
+		const total = this.entries.reduce(
+			(sum, e) => sum + e.data.unreadCount,
+			0,
+		);
+		setTotalUnread(total);
+	}
+
 	async #load(page: number): Promise<void> {
 		const result = await getConversations(page);
 		this.entries.push(...result.entries);
 		this.nextPage = result.nextPage;
+		this.#syncUnread();
 	}
 
 	async loadMore(): Promise<void> {
@@ -213,9 +226,11 @@ class ConversationsState {
 		let revert = () => {};
 		if (index > -1) {
 			const [removed] = this.entries.splice(index, 1);
+			this.#syncUnread();
 			revert = () => {
 				if (removed) {
 					this.entries.splice(index, 0, removed);
+					this.#syncUnread();
 				}
 			};
 		}
@@ -243,10 +258,12 @@ class ConversationsState {
 			const unreadCount = entry.data.unreadCount;
 			if (unreadCount > 0) {
 				entry.data.unreadCount = 0;
+				this.#syncUnread();
 				markConversationAsRead({ conversationId }).catch((error) => {
 					console.error("Failed to mark conversation as read", error);
 					toast.error("Failed to mark conversation as read");
 					entry.data.unreadCount = unreadCount;
+					this.#syncUnread();
 				});
 			}
 		}

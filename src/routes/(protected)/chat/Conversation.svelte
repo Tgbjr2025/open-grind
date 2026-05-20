@@ -1,12 +1,15 @@
 <script lang="ts">
 	import { page } from "$app/state";
-	import { UserIcon } from "phosphor-svelte";
+	import { TrashIcon, UserIcon } from "phosphor-svelte";
+	import { toast } from "svelte-sonner";
 
+	import { deleteConversationForMe } from "$lib/api/conversation";
 	import DisplayName from "$lib/components/DisplayName.svelte";
 	import * as Avatar from "$lib/components/ui/avatar";
 	import { Badge } from "$lib/components/ui/badge";
 	import * as Item from "$lib/components/ui/item";
 	import type { Conversation } from "$lib/model/conversation";
+	import { getConversations } from "./conversations-context.svelte";
 	import ConversationRelativeTimeDynamic from "./ConversationRelativeTimeDynamic.svelte";
 
 	let {
@@ -15,12 +18,64 @@
 		conversation: Conversation;
 	} = $props();
 
+	const conversations = getConversations();
+
 	const preview = $derived(conversation.data.preview);
 	const participant = $derived(conversation.data.participants[0]);
 
 	const selected = $derived(
 		page.params.conversationId === conversation.data.conversationId,
 	);
+
+	let showDeleteMenu = $state(false);
+
+	function openContextMenu(event: MouseEvent | PointerEvent) {
+		event.preventDefault();
+		showDeleteMenu = true;
+	}
+
+	async function handleDelete() {
+		showDeleteMenu = false;
+		const confirmed = confirm(
+			`Delete this conversation with ${conversation.data.name ?? "this person"}? This cannot be undone.`,
+		);
+		if (!confirmed) return;
+
+		const { revert } = conversations.remove(conversation.data.conversationId);
+		try {
+			await deleteConversationForMe({
+				conversationId: conversation.data.conversationId,
+			});
+		} catch (error) {
+			console.error("Failed to delete conversation", error);
+			toast.error("Failed to delete conversation");
+			revert();
+		}
+	}
+
+	let longPressTimer: ReturnType<typeof setTimeout> | null = null;
+
+	function onPointerDown(event: PointerEvent) {
+		if (event.button !== 0) return;
+		longPressTimer = setTimeout(() => {
+			longPressTimer = null;
+			showDeleteMenu = true;
+		}, 600);
+	}
+
+	function onPointerUp() {
+		if (longPressTimer !== null) {
+			clearTimeout(longPressTimer);
+			longPressTimer = null;
+		}
+	}
+
+	function onPointerCancel() {
+		if (longPressTimer !== null) {
+			clearTimeout(longPressTimer);
+			longPressTimer = null;
+		}
+	}
 </script>
 
 {#snippet avatar()}
@@ -106,26 +161,52 @@
 		{/if}
 	</Item.Actions>
 {/snippet}
-<Item.Root
-	variant={selected ? "muted" : "outline"}
-	class="p-0 gap-0 flex items-stretch flex-nowrap @container min-w-24"
->
-	<a
-		href="/profile/{participant.profileId}"
-		class="rounded-l-2xl @max-[9rem]:hidden"
+<div class="relative">
+	<Item.Root
+		variant={selected ? "muted" : "outline"}
+		class="p-0 gap-0 flex items-stretch flex-nowrap @container min-w-24"
+		oncontextmenu={openContextMenu}
+		onpointerdown={onPointerDown}
+		onpointerup={onPointerUp}
+		onpointercancel={onPointerCancel}
 	>
-		{@render avatar()}
-	</a>
-	<a
-		href="/chat/{conversation.data.conversationId}"
-		class="flex flex-1 self-stretch items-center p-4 ps-2 rounded-r-2xl min-w-0 gap-0.5 @max-[9rem]:hidden"
-	>
-		{@render content()}
-	</a>
-	<a
-		href="/chat/{conversation.data.conversationId}"
-		class="rounded-2xl @[9rem]:hidden min-w-24"
-	>
-		{@render avatar()}
-	</a>
-</Item.Root>
+		<a
+			href="/profile/{participant.profileId}"
+			class="rounded-l-2xl @max-[9rem]:hidden"
+		>
+			{@render avatar()}
+		</a>
+		<a
+			href="/chat/{conversation.data.conversationId}"
+			class="flex flex-1 self-stretch items-center p-4 ps-2 rounded-r-2xl min-w-0 gap-0.5 @max-[9rem]:hidden"
+		>
+			{@render content()}
+		</a>
+		<a
+			href="/chat/{conversation.data.conversationId}"
+			class="rounded-2xl @[9rem]:hidden min-w-24"
+		>
+			{@render avatar()}
+		</a>
+	</Item.Root>
+
+	{#if showDeleteMenu}
+		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+		<div
+			class="fixed inset-0 z-40"
+			onclick={() => (showDeleteMenu = false)}
+		></div>
+		<div
+			class="absolute right-2 top-2 z-50 min-w-36 rounded-xl border border-border bg-popover shadow-lg overflow-hidden"
+		>
+			<button
+				type="button"
+				onclick={handleDelete}
+				class="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
+			>
+				<TrashIcon class="size-4 shrink-0" />
+				Delete conversation
+			</button>
+		</div>
+	{/if}
+</div>

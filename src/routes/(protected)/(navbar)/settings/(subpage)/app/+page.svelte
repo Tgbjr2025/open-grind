@@ -3,6 +3,7 @@
 
 	import * as AlertDialog from "$lib/components/ui/alert-dialog";
 	import * as Item from "$lib/components/ui/item";
+	import DistanceUnitSetting from "./DistanceUnitSetting.svelte";
 	import RevealMessageReadSetting from "./RevealMessageReadSetting.svelte";
 	import RevealProfileViewSetting from "./RevealProfileViewSetting.svelte";
 
@@ -55,6 +56,8 @@
 			</Item.Root>
 		{/snippet}
 		{@render item({ title: "Notifications" })}
+		<h2>Display</h2>
+		<DistanceUnitSetting />
 		<h2>Privacy</h2>
 		<RevealMessageReadSetting />
 		<RevealProfileViewSetting />

@@ -4,7 +4,9 @@
 	import z from "zod";
 
 	import { fetchRest } from "$lib/api";
+	import { getDistanceUnit } from "$lib/app-data/distance-unit.svelte";
 	import * as Empty from "$lib/components/ui/empty";
+	import { formatDistance } from "$lib/utils/distance";
 	import { Spinner } from "$lib/components/ui/spinner";
 
 	const viewSchema = z
@@ -85,9 +87,7 @@
 								{/if}
 								{#if view.distance !== null}
 									<span class="text-xs text-muted-foreground/70">
-										{view.distance < 1000
-											? `${Math.round(view.distance)} m away`
-											: `${(view.distance / 1000).toFixed(1)} km away`}
+										{formatDistance(view.distance, getDistanceUnit())} away
 									</span>
 								{/if}
 							</div>

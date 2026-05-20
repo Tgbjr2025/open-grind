@@ -2,7 +2,9 @@
 	import { env } from "$env/dynamic/public";
 	import { UserIcon } from "phosphor-svelte";
 
+	import { getDistanceUnit } from "$lib/app-data/distance-unit.svelte";
 	import { Badge } from "$lib/components/ui/badge";
+	import { formatDistance } from "$lib/utils/distance";
 
 	let {
 		id,
@@ -50,7 +52,7 @@
 		<span
 			class="absolute top-1 right-1 border-transparent bg-transparent text-[11px] px-1 h-4 tracking-tight font-medium text-white/80 text-shadow-stroke"
 		>
-			{(distance / 1000).toFixed(1)} km
+			{formatDistance(distance, getDistanceUnit())}
 		</span>
 	{/if}
 	<!-- Bottom gradient for text legibility -->

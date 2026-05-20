@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChatCircleSlashIcon } from "phosphor-svelte";
+	import { ChatCircleSlashIcon, MagnifyingGlassIcon } from "phosphor-svelte";
 	import { onMount, tick } from "svelte";
 
 	import * as Empty from "$lib/components/ui/empty";
@@ -11,6 +11,17 @@
 	const conversations: ConversationsState = getConversations();
 
 	let container: HTMLDivElement | null = $state(null);
+	let searchQuery = $state("");
+
+	const filteredEntries = $derived(
+		searchQuery.trim() === ""
+			? conversations.entries
+			: conversations.entries.filter((c) =>
+					(c.data.name ?? "")
+						.toLowerCase()
+						.includes(searchQuery.trim().toLowerCase()),
+				),
+	);
 
 	onMount(() => {
 		void conversations.initial.then(tick).then(() => {
@@ -66,7 +77,18 @@
 			</Empty.Header>
 		</Empty.Root>
 	{:then}
-		{#each conversations.entries as conversation (conversation.data.conversationId)}
+		<div class="relative mb-2 shrink-0">
+			<MagnifyingGlassIcon
+				class="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground pointer-events-none"
+			/>
+			<input
+				type="search"
+				bind:value={searchQuery}
+				placeholder="Search conversations…"
+				class="w-full rounded-xl border border-input bg-input/30 py-2 pl-9 pr-3 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/50"
+			/>
+		</div>
+		{#each filteredEntries as conversation (conversation.data.conversationId)}
 			<Conversation {conversation} />
 		{:else}
 			<Empty.Root>
@@ -74,10 +96,15 @@
 					<Empty.Media variant="icon">
 						<ChatCircleSlashIcon weight="fill" />
 					</Empty.Media>
-					<Empty.Title>No Conversations Yet</Empty.Title>
-					<Empty.Description>
-						Browse <a href="/">Grid</a> to find people to chat with.
-					</Empty.Description>
+					{#if searchQuery.trim() !== ""}
+						<Empty.Title>No Results</Empty.Title>
+						<Empty.Description>No conversations match your search.</Empty.Description>
+					{:else}
+						<Empty.Title>No Conversations Yet</Empty.Title>
+						<Empty.Description>
+							Browse <a href="/">Grid</a> to find people to chat with.
+						</Empty.Description>
+					{/if}
 				</Empty.Header>
 			</Empty.Root>
 		{/each}
@@ -86,7 +113,7 @@
 				<Skeleton class="w-full h-24.5 shrink-0" />
 			{/each}
 		{/if}
-		{#if conversations.nextPage !== null}
+		{#if conversations.nextPage !== null && searchQuery.trim() === ""}
 			<div class="h-0" use:observeSentinel></div>
 		{/if}
 	{/await}

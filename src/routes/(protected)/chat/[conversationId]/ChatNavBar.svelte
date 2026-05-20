@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { ArrowLeftIcon, ArrowsClockwiseIcon, UserIcon } from "phosphor-svelte";
 
+	import { getDistanceUnit } from "$lib/app-data/distance-unit.svelte";
 	import DisplayName from "$lib/components/DisplayName.svelte";
+	import { formatDistance } from "$lib/utils/distance";
 	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
 	import * as Avatar from "$lib/components/ui/avatar";
 	import * as Card from "$lib/components/ui/card";
@@ -85,11 +87,7 @@
 						</Card.Description>
 					{:else}
 						<Card.Description class="truncate text-xs">
-							{#if profile.distance < 1000}
-								{Math.round(profile.distance)} m away
-							{:else}
-								{(profile.distance / 1000).toFixed(1)} km away
-							{/if}
+							{formatDistance(profile.distance, getDistanceUnit())} away
 						</Card.Description>
 					{/if}
 				</div>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import { page } from "$app/state";
-	import { ChatCircleIcon, FlagIcon, HeartIcon, HeartStraightIcon, PencilSimpleIcon, ProhibitIcon } from "phosphor-svelte";
+	import { ChatCircleIcon, FlagIcon, HandWavingIcon, HeartIcon, HeartStraightIcon, PencilSimpleIcon, ProhibitIcon } from "phosphor-svelte";
 	import { toast } from "svelte-sonner";
 
 	import { fetchRest } from "$lib/api";
@@ -62,6 +62,23 @@
 	function handleProfileSaved() {
 		clearProfileCache(profileId);
 		refetchTick++;
+	}
+
+	let tapPickerOpen = $state(false);
+
+	const TAP_EMOJIS: Record<number, string> = { 1: "👋", 2: "😊", 3: "🔥", 4: "😈" };
+
+	async function sendTap(type: number) {
+		tapPickerOpen = false;
+		try {
+			await fetchRest(`/v2/taps/${profileId}`, {
+				method: "POST",
+				body: JSON.stringify({ tapType: type }),
+			});
+			toast.success(`Tap sent! ${TAP_EMOJIS[type]}`);
+		} catch {
+			toast.error("Failed to send tap. Please try again.");
+		}
 	}
 
 	let favoriteOverride = $state<boolean | null>(null);
@@ -140,6 +157,30 @@
 					<Button size="icon-lg" class="size-14" href="/chat/{conversationId}">
 						<ChatCircleIcon weight="fill" class="size-8" />
 					</Button>
+					<div class="relative">
+						<Button
+							size="icon-lg"
+							class="size-14"
+							variant="outline"
+							onclick={() => (tapPickerOpen = !tapPickerOpen)}
+							aria-label="Send tap"
+						>
+							<HandWavingIcon class="size-8" />
+						</Button>
+						{#if tapPickerOpen}
+							<div class="absolute bottom-full mb-2 right-0 flex gap-1 bg-popover border border-border rounded-xl shadow-lg p-1.5 z-50">
+								{#each [1, 2, 3, 4] as type}
+									<button
+										class="text-2xl leading-none p-2 rounded-lg hover:bg-accent transition-colors cursor-pointer"
+										onclick={() => sendTap(type).catch((e) => console.error(e))}
+										aria-label="Send tap {TAP_EMOJIS[type]}"
+									>
+										{TAP_EMOJIS[type]}
+									</button>
+								{/each}
+							</div>
+						{/if}
+					</div>
 					<Button
 						size="icon-lg"
 						class="size-14"

@@ -9,10 +9,13 @@
 	import { getMyProfile } from "$lib/api/profile";
 	import ProgressiveBlur from "$lib/components/ProgressiveBlur.svelte";
 	import { tabsListVariants } from "$lib/components/ui/tabs";
+	import { getTotalUnread } from "$lib/stores/unread.svelte";
 
 	const myProfilePhotos = $derived(
 		getMyProfile().then((profile) => profile.medias),
 	);
+
+	const totalUnread = $derived(getTotalUnread());
 </script>
 
 <ProgressiveBlur
@@ -50,7 +53,16 @@
 			Views
 		</a>
 		<a href="/chat" data-active={page.route.id === "/(protected)/chat"}>
-			<ChatCircleIcon weight="fill" />
+			<span class="relative inline-flex">
+				<ChatCircleIcon weight="fill" />
+				{#if totalUnread > 0}
+					<span
+						class="absolute -right-1.5 -top-1.5 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-accent text-[10px] font-bold text-accent-foreground px-[3px] leading-none"
+					>
+						{totalUnread > 99 ? "99+" : totalUnread}
+					</span>
+				{/if}
+			</span>
 			Inbox
 		</a>
 	</div>
