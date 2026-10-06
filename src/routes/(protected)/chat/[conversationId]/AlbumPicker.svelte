@@ -70,7 +70,8 @@
 			photosState = { status: "loading" };
 			getProfileUploadedPhotos()
 				.then(({ medias }) => {
-					photosState = { status: "loaded", photos: medias };
+					// Only show photos that have a mediaId — photos without one can't be sent in chat.
+					photosState = { status: "loaded", photos: medias.filter((p) => p.mediaId !== undefined) };
 				})
 				.catch((err: unknown) => {
 					console.error("Failed to load photos", err);

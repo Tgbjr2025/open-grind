@@ -4,6 +4,7 @@ use reqwest::Method;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
+use std::sync::OnceLock;
 
 use crate::error::AppError;
 use crate::state::AppState;
@@ -31,6 +32,12 @@ fn is_allowed_grindr_host(host: &str) -> bool {
     labels[n - 2] == "grindr" && matches!(labels[n - 1], "com" | "mobi")
 }
 
+static IMAGE_FETCH_SEMAPHORE: OnceLock<tokio::sync::Semaphore> = OnceLock::new();
+
+fn image_semaphore() -> &'static tokio::sync::Semaphore {
+    IMAGE_FETCH_SEMAPHORE.get_or_init(|| tokio::sync::Semaphore::new(4))
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct RawResponse {
     pub status: u16,
@@ -49,14 +56,19 @@ impl GrindrClient {
         TReq: Serialize + ?Sized,
         TResp: DeserializeOwned,
     {
+        let full_url = format!("{BASE_URL}{path}");
+        eprintln!("[request_json] {} {}", method, full_url);
         let http = self.http.read().await.clone();
-        let mut request = http.request(method, format!("{BASE_URL}{path}"));
+        let mut request = http.request(method.clone(), &full_url);
 
         if let Some(body) = body {
             request = request.json(body);
         }
 
-        let response = request.send().await?;
+        let response = request.send().await.map_err(|e| {
+            eprintln!("[request_json] ERROR {} {}: {}", method, full_url, e);
+            AppError::Http(e.to_string())
+        })?;
 
         if !response.status().is_success() {
             let json: serde_json::Value = response.json().await.unwrap_or_default();
@@ -131,6 +143,8 @@ impl GrindrClient {
         let response = http.execute(request).await?;
         let status = response.status().as_u16();
         let body = response.bytes().await?.to_vec();
+
+        eprintln!("[request_raw] {} → status={} body={}", path, status, String::from_utf8_lossy(&body[..body.len().min(500)]));
 
         Ok(RawResponse { status, body })
     }
@@ -209,18 +223,28 @@ pub async fn fetch_authed_bytes(
         }
     }
 
+    let _permit = image_semaphore()
+        .acquire()
+        .await
+        .map_err(|_| AppError::Http("Image fetch semaphore closed".to_owned()))?;
+
     let http = state.client()?.http.read().await.clone();
 
     let response = http
         .get(&url)
         .header("Authorization", authorization)
+        .header("Accept", "*/*")
         .send()
         .await?;
 
-    if !response.status().is_success() {
+    let status = response.status();
+    eprintln!("[fetch_authed_bytes] status={} url={}", status, &url[..url.len().min(60)]);
+
+    if !status.is_success() {
+        eprintln!("[fetch_authed_bytes] FAILED status={}", status);
         return Err(AppError::Http(format!(
             "Image fetch failed with status {}",
-            response.status()
+            status
         )));
     }
 

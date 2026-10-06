@@ -2,27 +2,6 @@
 	import { invoke } from "@tauri-apps/api/core";
 	import type { ClassValue } from "svelte/elements";
 
-	// Cap concurrent fetch_authed_bytes calls so a full grid doesn't flood Tauri.
-	const MAX_CONCURRENT = 4;
-	let running = 0;
-	const waitQueue: (() => void)[] = [];
-
-	function acquireSlot(): Promise<void> {
-		return new Promise((resolve) => {
-			if (running < MAX_CONCURRENT) {
-				running++;
-				resolve();
-			} else {
-				waitQueue.push(() => { running++; resolve(); });
-			}
-		});
-	}
-
-	function releaseSlot() {
-		running--;
-		waitQueue.shift()?.();
-	}
-
 	let {
 		src,
 		alt = "",
@@ -40,16 +19,11 @@
 	} = $props();
 
 	let resolvedSrc = $state<string>("");
-	let currentSrc = $state(src);
 
 	$effect(() => {
 		const s = src;
-		currentSrc = s;
 		resolvedSrc = "";
 
-		// Android WebView doesn't reliably fire onerror when Grindr CDN returns
-		// 401 — skip the direct load attempt and always go through Tauri for
-		// external https:// URLs so auth headers are included.
 		if (!s.startsWith("https://")) {
 			resolvedSrc = s;
 			return;
@@ -57,21 +31,15 @@
 
 		let cancelled = false;
 
-		acquireSlot().then(() => {
-			if (cancelled) { releaseSlot(); return; }
-			return invoke<string>("fetch_authed_bytes", { url: s })
-				.then((dataUrl) => {
-					if (!cancelled && currentSrc === s) {
-						resolvedSrc = dataUrl;
-					}
-				})
-				.catch(() => {
-					if (!cancelled && currentSrc === s) {
-						externalOnerror?.();
-					}
-				})
-				.finally(() => releaseSlot());
-		});
+		invoke<string>("fetch_authed_bytes", { url: s })
+			.then((dataUrl) => {
+				console.log("[AI] got dataUrl len=" + dataUrl.length + " for " + s.slice(-20));
+				if (!cancelled) resolvedSrc = dataUrl;
+			})
+			.catch((err) => {
+				console.error("[AI] fetch_authed_bytes failed for " + s.slice(-20) + ": " + err);
+				if (!cancelled) externalOnerror?.();
+			});
 
 		return () => { cancelled = true; };
 	});

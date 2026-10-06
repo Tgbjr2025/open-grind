@@ -26,6 +26,7 @@ impl std::error::Error for AppError {}
 
 impl From<reqwest::Error> for AppError {
     fn from(e: reqwest::Error) -> Self {
+        eprintln!("[reqwest_err] url={:?} msg={}", e.url(), e);
         AppError::Http(e.to_string())
     }
 }

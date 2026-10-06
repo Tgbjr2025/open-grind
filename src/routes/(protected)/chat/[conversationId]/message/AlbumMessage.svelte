@@ -4,6 +4,7 @@
 	import { toast } from "svelte-sonner";
 	import type PhotoSwipeLightbox from "photoswipe/lightbox";
 
+	import { invoke } from "@tauri-apps/api/core";
 	import { type AlbumContentResponse, getAlbumContent } from "$lib/api/album";
 	import AuthedImage from "$lib/components/AuthedImage.svelte";
 	import type { AlbumMessage } from "$lib/model/message";
@@ -31,6 +32,7 @@
 		content: (AlbumContentResponse["content"][number] & {
 			width: number;
 			height: number;
+			src?: string; // data URL for images (auth-proxied); absent for videos
 		})[];
 	};
 
@@ -84,36 +86,27 @@
 									video.remove();
 								}
 							} else {
-								if (!slide.url) return { ...slide, src: "", width: 0, height: 0 };
-								const img = document.createElement("img");
-								img.src = slide.url ?? "";
+								if (!slide.url) return { ...slide, src: "", width: 320, height: 320 };
 								try {
-									await new Promise<void>((resolve, reject) => {
-										if (img.complete) resolve();
-										img.addEventListener("load", () => resolve(), {
-											once: true,
-										});
-										img.addEventListener(
-											"error",
-											({ error }) =>
-												reject(
-													new Error(`Failed to load image: ${slide.url}`, {
-														cause: error,
-													}),
-												),
-											{
-												once: true,
-											},
-										);
+									const src = await invoke<string>("fetch_authed_bytes", {
+										url: slide.url,
 									});
-									return {
-										...slide,
-										src: img.src,
-										width: img.naturalWidth,
-										height: img.naturalHeight,
-									};
-								} finally {
+									const img = document.createElement("img");
+									img.src = src;
+									await new Promise<void>((resolve) => {
+										if (img.complete && img.naturalWidth > 0) {
+											resolve();
+											return;
+										}
+										img.addEventListener("load", () => resolve(), { once: true });
+										img.addEventListener("error", () => resolve(), { once: true });
+									});
+									const w = img.naturalWidth || 320;
+									const h = img.naturalHeight || 320;
 									img.remove();
+									return { ...slide, src, width: w, height: h };
+								} catch {
+									return { ...slide, width: 320, height: 320 };
 								}
 							}
 						}),
@@ -152,8 +145,11 @@
 				});
 				lightbox.addFilter("numItems", () => album.content.length);
 				lightbox.addFilter("itemData", (_, index) => {
-					const { url, width, height } = album.content[index];
-					return { src: url, width, height };
+					const slide = album.content[index];
+					if (slide.contentType.startsWith("video/")) {
+						return { src: slide.url, width: slide.width, height: slide.height };
+					}
+					return { src: slide.src ?? slide.url, width: slide.width, height: slide.height };
 				});
 				lightbox.on("contentLoad", (event) => {
 					const { content } = event;

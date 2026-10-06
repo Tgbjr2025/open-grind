@@ -25,7 +25,7 @@
 			});
 			void goto("/");
 		} catch (error) {
-			console.error(error);
+			console.error("LOGIN_ERR:" + JSON.stringify(error));
 			const appError = asAppError(error);
 			if (appError) {
 				if (
